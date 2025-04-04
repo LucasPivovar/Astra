@@ -12,7 +12,7 @@ btn.onclick = function(){
 }
 signUp.onclick = function(){
   formLogin.style.display = "none";
-  formSignUp.style.display = "block";
+  formSignUp.style.display = "flex";
   textSignUp.style.display = "none";
   document.getElementById('titleModal').innerHTML = "Faça seu Registro";
 }

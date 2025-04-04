@@ -11,16 +11,20 @@
     padding: 1.2rem;
   }
 
+  .title{
+    font-family: "Libre Baskerville", sans-serif;
+    text-align: center;
+    font-size: 44px;
+    margin: 0px;
+  }
+
   .nome{
     font-size: 2rem;
     margin: 0px;
     cursor: default;
   }
-
-  .title{
-    color: #4578F9;
-  }
-  ul{
+  
+  .btn-menu{
     list-style: none;
     display: flex;
     gap: 70px;
@@ -138,18 +142,20 @@
     color: #1C5CFF;
     background: #F3F8FF;
     position: relative;
-    top: 13px;
-    left: 14px;
+    top: 11px;
+    left: -124px;
     width: 3rem;
   }
 
   .userLoginLabel{
     position: relative;
-    width: 8rem;
+    left: -85px;
+    width: 7.9rem;
   }
 
   .userLabel{
     width: 3.8rem;
+    left: -120px;
   }
 
   .formButton{
@@ -159,7 +165,7 @@
     height: 2.5rem;
   }
 
-  .span{
+  .blue{
     color: #4578F9;
   }
 

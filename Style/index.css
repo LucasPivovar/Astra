@@ -26,18 +26,12 @@
   margin-left: 0.5rem;
 }
 
-h1{
-  text-align: center;
-  font-size: 44px;
-  margin: 0px;
-}
-
-.span-diferent-blue{
+.diferent-blue{
   color: #1C5CFF;
 }
 
 .descrição{
-  font-size: 15px;
+  font-size: 18px;
   text-align: center;
   color: #858585;
   width: 40rem;
@@ -52,10 +46,10 @@ h1{
   margin-top: 3rem;
 }
 
-.comecar-agora{
-  border-radius: 20px;
+.btn-main{
+  border-radius: 30px;
   width: 11rem;
-  height: 2rem;
+  height: 2.5rem;
   font-size: 16px;
 }
 
@@ -87,16 +81,18 @@ h1{
   justify-content: center;
   align-items: center;
   background: #FFFFFF;
-  padding: 20px;
+  padding: 2rem;
   border-radius: 20px;
-  width: 15rem;
-  font-size: 18px;
+  min-width: 15rem;
+  font-size: 1.4em;
   color: #A3A3A3;
+  box-shadow: 0 0 8px 0.1px rgba(0, 0, 0, 0.3);
 }
 
 .title-card{
-  font-size: 38px;
-  color: #434242;
+  font-size: 30px;
+  color: #373737;
+  margin: 0px;
 }
 
 /* Projeto */
@@ -109,4 +105,65 @@ h1{
   gap: 20px;
   padding-top: 5rem;
   padding-bottom: 5rem;
+  text-align: left;
+}
+
+.grid-card{
+  margin-top: 10rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8rem 3rem;
+  transform: scale(0.91);
+}
+
+.cards-horizontais{
+  display: inline-block;
+  height: 14rem;
+  width: 29rem;
+  padding: 35px;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.svg{
+  border-radius: 10px;
+  width: 3rem;
+  height: 3rem;
+  padding: 0.5rem ;
+  background: #D9E4FF;
+}
+
+.card-IA-assistente{
+  width: 58rem;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+  color: #686868;
+  display: block;
+  justify-content: left;
+  background: #F2F6FF;
+}
+
+.card-IA-assistente h1{
+  text-align: left;
+}
+
+.verificado{
+  list-style: none;
+}
+.ul{
+  padding: 0;
+}
+.verificado::before{
+  content: "";
+  display: inline-block;
+  width: 23px;
+  height: 23px;
+  background: url(../svgs/Verificado.svg);
+  background-size: cover;
+  margin-right: 1rem;
+}
+
+.btn-IA{
+  width: 16rem;
+  padding: 1rem;
+  margin-top: 2rem;
 }

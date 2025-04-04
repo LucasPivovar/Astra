@@ -6,11 +6,13 @@
   <title>header</title>
   <link rel="stylesheet" href="./style/header.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
 </head>
 <body>
   <nav>
-    <h1 class="title">Astra</h1>
-    <ul>
+    <h1 class="blue title">Astra</h1>
+    <ul class = "btn-menu">
       <li><a href="" class="lineA">Comunidade</a></li>
       <li><a href="" class="lineA">IA Assistente</a></li>
       <li><a href="" class="lineA">Metas</a></li>
@@ -36,7 +38,7 @@
           <input type="password" id="password">
           <button type="submit" id="btnModal2" class="formButton button">Registrar</button>
         </form>
-        <p id="textSignUp">Não tem uma conta? <span id="signUp"class="register span">Registre se agora</span></p>
+        <p id="textSignUp">Não tem uma conta? <span id="signUp"class="register blue">Registre se agora</span></p>
       </div>
     </section>
   </nav>
