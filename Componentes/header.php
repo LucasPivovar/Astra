@@ -14,9 +14,9 @@
     <h1 class="blue title">Astra</h1>
     <ul class = "btn-menu">
       <li><a href="" class="lineA">Comunidade</a></li>
-      <li><a href="" class="lineA">IA Assistente</a></li>
+      <li><a href="chatbot.php" class="lineA">IA Assistente</a></li>
       <li><a href="" class="lineA">Metas</a></li>
-      <li><a href="" class="lineA">Inicio</a></li>
+      <li><a href="index.php" class="lineA">Inicio</a></li>
     </ul>
     <button id="btnLogin" class="loginButton button">Entre no Astra</button>
     <section id="modal" class="modalContainer">

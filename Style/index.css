@@ -89,6 +89,11 @@
   box-shadow: 0 0 8px 0.1px rgba(0, 0, 0, 0.3);
 }
 
+.card:hover{
+  scale: 1.02;
+  transition: all 0.3s ease-in-out;
+}
+
 .title-card{
   font-size: 30px;
   color: #373737;

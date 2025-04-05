@@ -1,0 +1,209 @@
+@media (min-width: 1024px) {    
+    /* General Page Styling */
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        width: 100%;
+        margin: 0;
+        font-family: noto sans, sans-serif;
+        flex-direction: column;
+
+    }
+
+    .content{
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    aside{
+        width: 300px;
+    }
+
+    /* Chat Container */
+    #chat-container {
+        background: #F3F8FF;
+        height: 80vh;
+        width: 680px;
+        padding: 20px;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    /* Chat Box */
+    #chat-box {
+        height: 580px;
+        overflow-y: auto;
+        border: none;
+        padding: 15px;
+        background: #f9f9f9;
+        border-radius: 10px;
+        display: flex; 
+        flex-direction: column; 
+    }
+
+    /* Classes para mensagens */
+    .user-message {
+        align-self: flex-end;
+        background-color: #ecf5ff;
+        color: #616161;
+        padding: 10px 15px;
+        border-radius: 15px;
+        max-width: 80%;
+        word-wrap: break-word;
+        opacity: 0;
+        animation: fadeInRight 1s ease forwards;
+        margin-bottom: 8px;
+        margin-top: 8px;
+        margin-left: auto;
+        margin-right: none;
+        display: inline-block;
+    }
+    
+    .bot-message {
+        align-self: flex-start;
+        background-color: #ecfaf5;
+        color: #616161;
+        padding: 10px 15px;
+        border-radius: 15px;
+        max-width: 80%;
+        word-wrap: break-word;
+        display: inline-block; 
+        position: relative;
+        animation: fadeInLeft 1s ease forwards;
+
+    }
+
+    /* Texto padrão */
+    #empty-message {
+        text-align: center;
+        color: #5C5C5C;
+        font-size: 25px;
+        display: block; 
+        margin: auto;
+        width: 80%;
+        font-weight: 500;
+
+    }
+
+    /* Chat Input */
+    #user-input {
+        flex: 1;
+        padding: 20px;
+        border: none;
+        border-radius: 20px;
+        outline: none;
+        font-size: 16px;
+        transition: 0.6s;
+        height: 10px;
+    }
+
+
+    /* Send Button */
+    button {
+        color: white;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 16px;
+        background-color: transparent;
+        transition: 0.3s;
+        position: relative;
+    }
+
+    #clear-history {
+        color: black;
+    }
+
+    button:focus{
+        border: none;
+    }
+
+    .btn_enviar {
+        width: 30px;
+        margin-top: 6px;
+        margin-right: 1rem;
+    }
+
+    /* Input Container */
+    .input-container {
+        display: flex;
+        margin-top: 15px;
+        border-radius: 50px;
+        padding: 10px;
+        height: 30px;
+        border: 2px solid #595BD4;
+        align-items: center;
+    }
+
+    /* Smooth Scroll */
+    #chat-box::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    #chat-box::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 10px;
+    }
+
+    /* Header */
+    #chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #ccc;
+        color: #5C5C5C;
+    }
+
+    #chat-header h2 {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 0;
+        
+    }
+
+    #clear-history button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #5C5C5C;
+    }
+
+    #clear-history button:hover {
+        color: #595BD4;
+        scale: 1.05;
+    }
+
+}
+
+
+
+    /* Animações */
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
