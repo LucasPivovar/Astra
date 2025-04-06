@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Incio</title>
   <?php
     include('./componentes/header.php')
   ?>
@@ -13,14 +13,12 @@
   <main>
     <!-- dados -->
     <section class = "dados"> 
-      <div class ="link-bem-estar">
-      <p class = "span bem-estar">Uma nova abordagem para o bem estar</p>
-      </div>
+      <a class = "blue bem-estar" href = "chatbot.php">Uma nova abordagem para o bem estar ➜</a>
       <h1 class="title"> <span class="diferent-blue"> Astra: </span> Encontre apoio <br> na sua jornada de superação</h1>
-      <h2 class = "descrição">Uma comunidade digital que oferece suporte personalizado, ferramentas de acompanhamento e conexões significativas para ajudar você a superar seus desafios.</h2>
+      <p class = "descrição">Uma comunidade digital que oferece suporte personalizado, ferramentas de acompanhamento e conexões significativas para ajudar você a superar seus desafios.</p>
       <div class = "buttons">
-        <button class = "button btn-main">Começar agora</button>
-        <p class = "saiba-mais"> Saiba mais</p>
+        <a class = "button a-btn-main">Começar agora</a>
+        <a class = "saiba-mais" href = "/"> Saiba mais ➜</a>
       </div>
       <div class = "cards">
         <div class = "card">
@@ -40,7 +38,7 @@
     <!-- Projeto -->
     <section class = "projeto">
       <h1 class = "diferent-blue title"> Como a Astra pode ajudar você </h1>
-      <h2 class = "descrição"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </h2>
+      <p class = "descrição"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </p>
       <div class = "cards grid-card">
         <div class = "card card-IA cards-horizontais">
           <img src="./svgs/robot.svg" alt="Figura Robô" class = "svg">
@@ -65,7 +63,7 @@
             <p> Conecte-se com pessoas que enfrentam desafios semelhantes, compartilhe experiências e encontre inspiração em histórias de superação. </p>
         </div>
       </div>
-      <div class = "card card-horizontais card-IA-assistente">
+      <div class = "card card-horizontais card-IA-assistente" id="redirecionament-IA">
         <h1 class = "title title-card">Assistente de IA Personalizados</h1>
         <p> Nosso assistente virtual inteligente está disponível 24 horas por dia para oferecer orientação, exercícios de respiração, técnicas de mindfulness e estratégias personalizadas para ajudar você a superar momentos difíceis. </p>
         <ul class = "ul">
@@ -74,7 +72,32 @@
           <li class = "verificado"> Recursos educativos sobre dependência</li>
           <li class = "verificado"> Lembretes motivacionais diários</li>
         </ul>
-        <button class = "button btn-IA btn-main"> Experimente o assistente </button>
+        <a class = "button a-btn-IA a-btn-main" href ="chatbot.php"> Experimente o assistente </a>
+      </div>
+    </section>
+    <!-- Conheça Recursos -->
+    <section class = "conheca-recursos">
+      <h1 class = "diferent-blue title"> Conheça nossos recursos </h1>
+      <p class = "descrição"> Ferramentas desenvolvidas para apoiar você em cada etapa da sua jornada de superação </p>
+      <div class = "cards cards-recursos">
+        <div class = "card card-recurso">
+          <img src="./svgs/circulo.svg" alt="" class = "svg">
+          <h1 class = "title-card "> Acompanhamento de Metas </h1>
+          <p> Defina objetivos, acompanhe seu progresso e celebre suas conquistas </p>
+          <a href="/" class = "button a-btn-recurso"> Acessar metas ➜ </a>
+        </div>
+        <div class = "card card-recurso">
+          <img src="./svgs/robot.svg" alt="" class = "svg">
+          <h1 class = "title-card"> Assistente Virtual </h1>
+          <p> Receba apoio e orientação personalizada 24 horas por dia </p>
+          <a href="chatbot.php" class = "button a-btn-recurso "> Falar com assistente ➜ </a>
+        </div>
+        <div class = "card card-recurso">
+          <img src="./svgs/circulo.svg" alt="" class = "svg">
+          <h1 class = "title-card"> Comunidade </h1>
+          <p> Conecte-se com outros membros, compartilhe experiências e histórias </p>
+          <a href="/" class = "button a-btn-recurso"> Ver Comiunidade ➜ </a>
+        </div>
       </div>
     </section>
   </main>

@@ -11,7 +11,7 @@
 </head>
 <body>
   <nav>
-    <h1 class="blue title">Astra</h1>
+    <h1 class="blue title nome-empresa">Astra</h1>
     <ul class = "btn-menu">
       <li><a href="" class="lineA">Comunidade</a></li>
       <li><a href="chatbot.php" class="lineA">IA Assistente</a></li>
