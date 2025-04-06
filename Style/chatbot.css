@@ -37,6 +37,7 @@
         border-radius: 10px;
         display: flex; 
         flex-direction: column; 
+        max-width: 800px;
     }
 
     /* Classes para mensagens */
@@ -45,7 +46,7 @@
         background-color: #AFE0FF4D;
         color: #616161;
         padding: 10px 15px;
-        border-radius: 15px;
+        border-radius: 15px 0px 15px 15px;
         max-width: 80%;
         word-wrap: break-word;
         opacity: 0;
@@ -62,8 +63,8 @@
         background-color: #B2FFD24D;
         color: #616161;
         padding: 10px 15px;
-        border-radius: 15px;
-        max-width: 80%;
+        border-radius: 0px 15px 15px 15px;
+        max-width: 75%;
         word-wrap: break-word;
         display: inline-block; 
         position: relative;
@@ -138,24 +139,6 @@
         border-radius: 10px;
     }
 
-    /* Header */
-    #chat-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        background-color: #f9f9f9;
-        border-bottom: 1px solid #ccc;
-        color: #5C5C5C;
-    }
-
-    #chat-header h2 {
-        font-size: 20px;
-        font-weight: bold;
-        margin: 0;
-        
-    }
-
     #clear-history button {
         display: flex;
         justify-content: center;
@@ -166,17 +149,16 @@
         max-height: 2.5rem;
         border: none;
         cursor: pointer;
-        font-size: 15px;
+        font-size: 18px;
         font-weight: bold;
         color: #4578F9;
         transition: scale 0.3s;
+        margin-top: 1rem;
+        gap: 0.5rem;
     }
-    #clear-history button::before {
-        content: "+";
-        position: relative;
+
+    #clear-history button span {
         font-size: 23px;
-        font-weight: bold;
-        left: -7px;
     }
 
     #clear-history button:hover {

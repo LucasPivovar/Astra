@@ -94,6 +94,7 @@
     justify-content: center;
     align-items: center;
     background: rgba(0, 0, 0, 75%);
+    z-index: 10;
   }
   
   .backgroundModal{
@@ -161,12 +162,14 @@
     top: 11px;
     left: -124px;
     width: 3rem;
+    padding: 0px 8px 0px 8px;
+
   }
 
   .userLoginLabel{
     position: relative;
     left: -85px;
-    width: 7.9rem;
+    width: 8rem;
   }
 
   .userLabel{

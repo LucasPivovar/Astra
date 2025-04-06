@@ -19,7 +19,7 @@
     <div class="content">
         <aside>
             <div id="clear-history">
-                <button type="button" id="clear-history-btn" class="text-button">Nova Conversa</button>
+                <button type="button" id="clear-history-btn" class="text-button"> <span>+</span> Nova Conversa</button>
             </div>
         </aside>
         <main id="chat-container">    

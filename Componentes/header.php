@@ -25,7 +25,7 @@
         <form id="formLogin">
           <label for="userLoginForm" class="label userLoginLabel"> Usuário ou Email</label>
           <input type="text,email" id="userLoginForm">
-          <label for="passwordLoginForm" class="label"> Senha</label>
+          <label for="passwordLoginForm" class="label passwordLabel"> Senha</label>
           <input type="password" id="passwordLoginForm">
           <button type="submit" id="btnModal1" class="formButton button">Fazer Login</button>
         </form>
