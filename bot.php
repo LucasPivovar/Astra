@@ -120,7 +120,7 @@ if (!$isLoggedIn) {
                     id="send-button" 
                     aria-label="Enviar mensagem"
                 >
-                    <img src="./assets/upArrow.svg" alt="" class="btn_enviar">
+                    <img src="./assets/UpArrow.svg" alt="" class="btn_enviar">
                 </button>
             </footer>
         </main>

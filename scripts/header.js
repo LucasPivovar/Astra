@@ -9,26 +9,34 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-
-  // Troca entre formulários (Login e Registro)
-  const signUpLink = document.getElementById('signUp');
-  if (signUpLink) {
-    signUpLink.addEventListener('click', (e) => {
+  
+  // Elementos do formulário
+  const formLogin = document.getElementById('formLogin');
+  const formSignUp = document.getElementById('formSignUp');
+  const titleModal = document.getElementById('titleModal');
+  const textSignUp = document.getElementById('textSignUp');
+  
+  // Usa delegação de eventos para capturar cliques em links de alternância
+  document.addEventListener('click', function(e) {
+    // Verifica se o elemento clicado é o link de registro
+    if (e.target && e.target.id === 'signUp') {
       e.preventDefault();
-
-      const forms = {
-        login: document.getElementById('formLogin'),
-        signUp: document.getElementById('formSignUp')
-      };
-
-      if (forms.login && forms.signUp) {
-        forms.login.style.display = 'none';
-        forms.signUp.style.display = 'block';
-        document.getElementById('titleModal').textContent = 'Cadastrar';
-      }
-    });
-  }
-
+      formLogin.style.display = 'none';
+      formSignUp.style.display = 'block';
+      titleModal.textContent = 'Cadastrar';
+      textSignUp.innerHTML = 'Já tem uma conta? <span id="loginLink" class="register blue">Faça login</span>';
+    }
+    
+    // Verifica se o elemento clicado é o link de login
+    if (e.target && e.target.id === 'loginLink') {
+      e.preventDefault();
+      formSignUp.style.display = 'none';
+      formLogin.style.display = 'block';
+      titleModal.textContent = 'Entre em Sua Conta';
+      textSignUp.innerHTML = 'Não tem uma conta? <span id="signUp" class="register blue">Registre-se agora</span>';
+    }
+  });
+  
   // Fecha o modal ao clicar fora
   window.addEventListener('click', (e) => {
     const modal = document.getElementById('modal');

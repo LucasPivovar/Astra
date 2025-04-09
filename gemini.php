@@ -34,6 +34,12 @@ try {
     // Get API key from .env file
     $apiKey = loadApiKey();
     
+    // Get user name from database
+    $userStmt = $pdo->prepare("SELECT username FROM users WHERE id = :user_id");
+    $userStmt->execute([':user_id' => $userId]);
+    $userData = $userStmt->fetch(PDO::FETCH_ASSOC);
+    $userName = $userData['username'] ?? 'Usuário'; // Default to 'Usuário' if name not found
+    
     // Get context from this specific conversation only
     $stmt = $pdo->prepare("
         SELECT user_message, bot_response 
@@ -52,9 +58,18 @@ try {
     
     $conversationHistory = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Build the context string
-    $context = "Você é um assistente terapêutico chamado AstraAI focado em tratar dependência química. Mantenha suas respostas empáticas, úteis e baseadas em evidências científicas atuais sobre tratamento de dependência química. Não julgue o usuário, independente do que ele compartilhar. Ofereça suporte e encorajamento.\n\nHistórico da conversa:\n";
-    
+    // Build the context string with user name
+    $context = "Você é um assistente terapêutico chamado AstraAI focado em tratar os 
+    vicios em geral da pessoa como (vicios em fumar, jogar jogos de aposta, pornografia, etc...),
+    entao nao faça perguntas indiscretas e que deixariam a pessoa desconfortavel. O nome do usuário é {$userName},
+    use o nome dele em saudações como 'olá', 'oi', etc. Apenas fale saudaçoes se tiver saudações,
+    caso contrario não fale saudaçoes. Mantenha suas respostas empáticas, úteis e baseadas em evidências científicas atuais sobre tratamento de dependência química.
+    Não julgue o usuário, independente do que ele compartilhar. Ofereça suporte e encorajamento.\n\nHistórico da conversa:\n evite textos muito longos, e não use *,
+    procure utilizar processamento de linguagem natural (PLN), ou seja, busque vários exemplos de frases humanas para utilizar na saída. Dê respostas mais curtas,
+    e vá dando mais informações de acordo com o que a conversa vá fluindo, tente fazer com que o usuário acomode-se o máximo possível.
+    , utilize como exemplos mensagens de whatsapp,
+    Messenger e Telegram. e sem falar é 'prazer em conhecer', 'ótimo te conhecer' pois tem a chance de nao ser o primeiro chat. sem respostas secas ou sem ânimo.
+     E nunca utilize mais de 1 '?' seguido";    
     foreach ($conversationHistory as $message) {
         if (!empty($message['user_message'])) {
             $context .= "Usuário: " . $message['user_message'] . "\n";

@@ -96,10 +96,9 @@ function sanitizeInput($input) {
 
     <?php if ($isLoggedIn): ?>
       <div class="user-panel">
-        <span><?= htmlspecialchars($_SESSION['username']) ?></span>
+        <span ><?= htmlspecialchars($_SESSION['username']) ?></span>
         <form method="POST" action="index.php" style="display: inline;">
           <input type="hidden" name="logout" value="1">
-          <button type="submit" class="button">Sair</button>
         </form>
       </div>
     <?php else: ?>

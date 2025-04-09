@@ -46,19 +46,42 @@ try {
         ':id_conversa' => $conversationId
     ]);
     
-    $messages = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $dbMessages = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
-    // Format the response
+    // Format messages para evitar duplicação
     $formattedMessages = [];
-    foreach ($messages as $message) {
-        // Only add non-empty messages
-        if (!empty($message['user_message']) || !empty($message['bot_response'])) {
-            $formattedMessages[] = [
-                'id' => $message['id'],
-                'user_message' => $message['user_message'],
-                'bot_response' => $message['bot_response'],
-                'timestamp' => $message['timestamp']
-            ];
+    $seenUserMessages = [];
+    $seenBotResponses = [];
+    
+    foreach ($dbMessages as $message) {
+        // Adiciona a mensagem do usuário se existir e não for duplicada
+        if (!empty($message['user_message'])) {
+            $userMessageHash = md5($message['user_message']);
+            
+            if (!in_array($userMessageHash, $seenUserMessages)) {
+                $seenUserMessages[] = $userMessageHash;
+                
+                $formattedMessages[] = [
+                    'type' => 'user',
+                    'content' => $message['user_message'],
+                    'timestamp' => $message['timestamp']
+                ];
+            }
+        }
+        
+        // Adiciona a resposta do bot se existir e não for duplicada
+        if (!empty($message['bot_response'])) {
+            $botResponseHash = md5($message['bot_response']);
+            
+            if (!in_array($botResponseHash, $seenBotResponses)) {
+                $seenBotResponses[] = $botResponseHash;
+                
+                $formattedMessages[] = [
+                    'type' => 'bot',
+                    'content' => $message['bot_response'],
+                    'timestamp' => $message['timestamp'] 
+                ];
+            }
         }
     }
     
@@ -71,3 +94,4 @@ try {
     error_log('Database error: ' . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Erro ao buscar conversa: ' . $e->getMessage()]);
 }
+?>

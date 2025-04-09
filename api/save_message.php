@@ -37,6 +37,7 @@ $userId = $data['user_id'];
 $conversationId = $data['id_conversa'];
 $messageType = $data['message_type'];
 $messageContent = $data['message_content'];
+$title = isset($data['title']) ? $data['title'] : null;
 
 // Verify that user ID matches the session user
 if ($userId != $_SESSION['user_id']) {
@@ -45,40 +46,101 @@ if ($userId != $_SESSION['user_id']) {
 }
 
 try {
-    // Check if this conversation exists
+    // Start transaction
+    $pdo->beginTransaction();
+    
+    // Check if this is a new conversation
     $checkStmt = $pdo->prepare("
         SELECT COUNT(*) AS count 
         FROM chat_history 
-        WHERE id_conversa = :id_conversa
+        WHERE id_conversa = :id_conversa AND user_id = :user_id
     ");
-    $checkStmt->execute([':id_conversa' => $conversationId]);
+    $checkStmt->execute([
+        ':id_conversa' => $conversationId,
+        ':user_id' => $userId
+    ]);
     $result = $checkStmt->fetch(PDO::FETCH_ASSOC);
+    $isNewConversation = ($result['count'] == 0);
     
-    // If this is a new conversation, create a placeholder entry
-    if ($result['count'] == 0) {
-        $createStmt = $pdo->prepare("
-            INSERT INTO chat_history (user_id, id_conversa, timestamp) 
-            VALUES (:user_id, :id_conversa, NOW())
-        ");
-        
-        $createStmt->execute([
-            ':user_id' => $userId,
-            ':id_conversa' => $conversationId
-        ]);
-    }
+    // Verificar duplicação baseada no conteúdo exato da mensagem
+    $contentHash = md5($messageContent);
     
-    // Now handle the actual message
     if ($messageType === 'user') {
-        // Insert a new user message
-        $query = "INSERT INTO chat_history (user_id, id_conversa, user_message, timestamp) 
-                  VALUES (:user_id, :id_conversa, :message_content, NOW())";
+        // Verificar se essa mensagem de usuário já existe
+        $checkDuplicateStmt = $pdo->prepare("
+            SELECT COUNT(*) AS count FROM chat_history 
+            WHERE id_conversa = :id_conversa 
+            AND user_id = :user_id
+            AND MD5(user_message) = :content_hash
+            AND timestamp > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+        ");
+        $checkDuplicateStmt->execute([
+            ':id_conversa' => $conversationId,
+            ':user_id' => $userId,
+            ':content_hash' => $contentHash
+        ]);
+        $duplicateResult = $checkDuplicateStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($duplicateResult['count'] > 0) {
+            // Mensagem duplicada, não salvar novamente
+            $pdo->commit();
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Mensagem já existente.',
+                'conversation_id' => $conversationId,
+                'duplicate' => true
+            ]);
+            exit;
+        }
+        
+        // Direct insert for user messages
+        $query = "INSERT INTO chat_history (user_id, id_conversa, user_message, timestamp";
+        $query .= ($isNewConversation && $title !== null) ? ", title) " : ") ";
+        $query .= "VALUES (:user_id, :id_conversa, :message_content, NOW()";
+        $query .= ($isNewConversation && $title !== null) ? ", :title)" : ")";
+        
         $params = [
             ':user_id' => $userId,
             ':id_conversa' => $conversationId,
             ':message_content' => $messageContent
         ];
-    } else if ($messageType === 'bot') {
-        // Find the latest message from this user in this conversation that doesn't have a bot response yet
+        
+        if ($isNewConversation && $title !== null) {
+            $params[':title'] = $title;
+        }
+        
+        $stmt = $pdo->prepare($query);
+        $stmt->execute($params);
+    } 
+    else if ($messageType === 'bot') {
+        // Verificar se essa resposta do bot já existe
+        $checkDuplicateStmt = $pdo->prepare("
+            SELECT COUNT(*) AS count FROM chat_history 
+            WHERE id_conversa = :id_conversa 
+            AND user_id = :user_id
+            AND MD5(bot_response) = :content_hash
+            AND timestamp > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+        ");
+        $checkDuplicateStmt->execute([
+            ':id_conversa' => $conversationId,
+            ':user_id' => $userId,
+            ':content_hash' => $contentHash
+        ]);
+        $duplicateResult = $checkDuplicateStmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($duplicateResult['count'] > 0) {
+            // Resposta do bot duplicada, não salvar novamente
+            $pdo->commit();
+            echo json_encode([
+                'success' => true, 
+                'message' => 'Resposta já existente.',
+                'conversation_id' => $conversationId,
+                'duplicate' => true
+            ]);
+            exit;
+        }
+        
+        // For bot messages, find the latest user message without a response
         $findStmt = $pdo->prepare("
             SELECT id FROM chat_history 
             WHERE user_id = :user_id 
@@ -93,42 +155,67 @@ try {
             ':id_conversa' => $conversationId
         ]);
         
-        $result = $findStmt->fetch(PDO::FETCH_ASSOC);
+        $row = $findStmt->fetch(PDO::FETCH_ASSOC);
         
-        if ($result) {
+        if ($row) {
             // Update existing record with bot response
-            $query = "UPDATE chat_history 
-                      SET bot_response = :message_content, timestamp = NOW() 
-                      WHERE id = :id";
-            $params = [
+            $stmt = $pdo->prepare("
+                UPDATE chat_history 
+                SET bot_response = :message_content, timestamp = NOW() 
+                WHERE id = :id
+            ");
+            $stmt->execute([
                 ':message_content' => $messageContent,
-                ':id' => $result['id']
-            ];
+                ':id' => $row['id']
+            ]);
         } else {
-            // Create a new record with just the bot response
-            $query = "INSERT INTO chat_history (user_id, id_conversa, bot_response, timestamp) 
-                      VALUES (:user_id, :id_conversa, :message_content, NOW())";
-            $params = [
+            // Create new record with just bot response
+            $stmt = $pdo->prepare("
+                INSERT INTO chat_history (user_id, id_conversa, bot_response, timestamp) 
+                VALUES (:user_id, :id_conversa, :message_content, NOW())
+            ");
+            $stmt->execute([
                 ':user_id' => $userId,
                 ':id_conversa' => $conversationId,
                 ':message_content' => $messageContent
-            ];
+            ]);
         }
     } else {
-        echo json_encode(['success' => false, 'message' => 'Tipo de mensagem inválido.']);
-        exit;
+        throw new Exception('Tipo de mensagem inválido.');
     }
-
-    // Execute the query
-    $stmt = $pdo->prepare($query);
-    $stmt->execute($params);
+    
+    // Update title for existing conversation if provided
+    if (!$isNewConversation && $title !== null) {
+        $updateTitleStmt = $pdo->prepare("
+            UPDATE chat_history 
+            SET title = :title 
+            WHERE id_conversa = :id_conversa 
+            AND user_id = :user_id
+            ORDER BY timestamp ASC
+            LIMIT 1
+        ");
+        
+        $updateTitleStmt->execute([
+            ':title' => $title,
+            ':id_conversa' => $conversationId,
+            ':user_id' => $userId
+        ]);
+    }
+    
+    // Commit transaction
+    $pdo->commit();
 
     echo json_encode([
         'success' => true, 
         'message' => 'Mensagem salva com sucesso.',
         'conversation_id' => $conversationId
     ]);
-} catch (PDOException $e) {
-    error_log('Database error: ' . $e->getMessage());
+} catch (Exception $e) {
+    // Roll back transaction on error
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+    error_log('Error: ' . $e->getMessage());
     echo json_encode(['success' => false, 'message' => 'Erro ao salvar mensagem: ' . $e->getMessage()]);
 }
+?>

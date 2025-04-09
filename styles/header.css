@@ -212,3 +212,10 @@
   background: #e8f5e9;
   color: #2e7d32;
 }
+
+.user-panel span {
+  font-size: 1.3rem;
+  display: flex;
+  font-family: "Libre Baskerville", sans-serif;
+  cursor: pointer;
+}

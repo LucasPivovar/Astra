@@ -116,6 +116,9 @@ class ChatInterface {
         emptyItem.textContent = 'Nenhuma conversa encontrada';
         emptyItem.classList.add('empty-list');
         conversationList.appendChild(emptyItem);
+        
+        // Exibir mensagem vazia se não há conversas
+        this.showEmptyMessage();
         return;
       }
 
@@ -142,6 +145,9 @@ class ChatInterface {
 
         conversationList.appendChild(listItem);
       });
+      
+      // Verificar se deve mostrar mensagem vazia
+      this.checkEmptyState();
     } catch (error) {
       console.error('Erro ao carregar conversas:', error);
       
@@ -173,27 +179,26 @@ class ChatInterface {
       
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
-
+  
       // Limpar chat atual
       this.clearChat();
-
+  
       // Exibir mensagens da conversa
       if (data.messages && data.messages.length > 0) {
         data.messages.forEach(message => {
-          if (message.user_message) {
-            this.displayMessage('user', message.user_message, false);
-          }
-          if (message.bot_response) {
-            this.displayMessage('bot', message.bot_response, false);
+          // Usar o novo formato de mensagens
+          if (message.type && message.content) {
+            this.displayMessage(message.type, message.content, false);
           }
         });
+        
+        // Ocultar mensagem vazia pois há mensagens
+        this.hideEmptyStateMessage();
       } else {
         // Mostrar estado vazio se não houver mensagens
-        if (this.elements.emptyMessage) {
-          this.elements.emptyMessage.style.display = 'block';
-        }
+        this.showEmptyMessage();
       }
-
+  
       this.scrollToBottom();
       
       // Atualizar UI para refletir conversa atual
@@ -214,10 +219,6 @@ class ChatInterface {
 
   clearChat() {
     this.elements.chatBox.innerHTML = '';
-    // Ocultar mensagem vazia por padrão
-    if (this.elements.emptyMessage) {
-      this.elements.emptyMessage.style.display = 'none';
-    }
   }
 
   startNewConversation() {
@@ -231,9 +232,12 @@ class ChatInterface {
         this.clearChat();
         
         // Mostrar mensagem de boas-vindas
-        if (this.elements.emptyMessage) {
-          this.elements.emptyMessage.style.display = 'block';
-        }
+        this.showEmptyMessage();
+        
+        // Remover seleção de todos os itens da lista
+        document.querySelectorAll('#conversation-list li').forEach(item => {
+          item.classList.remove('active-conversation');
+        });
         
         this.elements.userInput.focus();
         this.loadConversations();
@@ -241,6 +245,32 @@ class ChatInterface {
         alert('Não foi possível criar uma nova conversa. Por favor, tente novamente.');
       }
     });
+  }
+  
+  // Novo método para verificar se deve mostrar mensagem vazia
+  checkEmptyState() {
+    const hasActiveConversation = document.querySelectorAll('#conversation-list li.active-conversation').length > 0;
+    const hasMessages = this.elements.chatBox.children.length > 0;
+    
+    if (!hasActiveConversation || (hasActiveConversation && !hasMessages)) {
+      this.showEmptyMessage();
+    } else {
+      this.hideEmptyStateMessage();
+    }
+  }
+  
+  // Mostrar mensagem vazia
+  showEmptyMessage() {
+    if (this.elements.emptyMessage) {
+      this.elements.emptyMessage.style.display = 'block';
+    }
+  }
+  
+  // Ocultar mensagem vazia
+  hideEmptyStateMessage() {
+    if (this.elements.emptyMessage) {
+      this.elements.emptyMessage.style.display = 'none';
+    }
   }
   
   async createNewConversation(conversationId) {
@@ -269,36 +299,67 @@ class ChatInterface {
 
   sendMessage() {
     const userInput = this.elements.userInput.value.trim();
-
+  
     if (!userInput || !this.currentConversationId) return;
-
+  
+    // Adicionar um ID único para esta mensagem
+    const messageId = `msg_${Date.now()}`;
+    
+    // Desabilitar o botão de envio temporariamente para evitar duplos cliques
+    const sendButton = document.getElementById('send-button');
+    if (sendButton) {
+      sendButton.disabled = true;
+      setTimeout(() => { sendButton.disabled = false; }, 1000); // Reabilitar após 1 segundo
+    }
+  
     // Ocultar mensagem de boas-vindas
     this.hideEmptyStateMessage();
     
     // Exibir mensagem do usuário imediatamente
     this.displayMessage('user', userInput);
     this.clearUserInput();
-
-    // Salvar mensagem do usuário
-    this.saveMessageToServer('user', userInput);
-
+  
+    // Inicializar o conjunto de mensagens enviadas se ainda não existir
+    if (!window.sentMessages) window.sentMessages = new Set();
+    
+    // Verificar se esta mensagem específica já foi salva
+    const userMessageHash = `user_${userInput.substring(0, 50)}_${this.currentConversationId}`;
+    if (!window.sentMessages.has(userMessageHash)) {
+      window.sentMessages.add(userMessageHash);
+      
+      // Salvar mensagem do usuário
+      this.saveMessageToServer('user', userInput);
+    }
+  
     // Obter resposta da IA
     this.fetchBotResponse(userInput)
       .then(responseText => {
-        // Exibir e salvar resposta do bot
-        this.displayMessage('bot', responseText, true); // true = usar efeito de digitação
-        this.saveMessageToServer('bot', responseText);
+        // Exibir resposta do bot com efeito de digitação
+        this.displayMessage('bot', responseText, true);
+        
+        // Criar ID único para a resposta do bot
+        const botMessageHash = `bot_${responseText.substring(0, 50)}_${this.currentConversationId}`;
+        if (!window.sentMessages.has(botMessageHash)) {
+          window.sentMessages.add(botMessageHash);
+          this.saveMessageToServer('bot', responseText);
+        }
       })
       .catch((error) => {
         console.error('Erro ao buscar resposta do bot:', error);
         const errorText = 'Falha ao buscar resposta. Por favor, tente novamente mais tarde.';
         this.displayMessage('bot', errorText, true);
-        this.saveMessageToServer('bot', errorText);
+        
+        // Também salvar mensagem de erro com verificação
+        const errorHash = `error_${errorText}_${this.currentConversationId}`;
+        if (!window.sentMessages.has(errorHash)) {
+          window.sentMessages.add(errorHash);
+          this.saveMessageToServer('bot', errorText);
+        }
       });
-
+  
     this.scrollToBottom();
   }
-
+  
   async fetchBotResponse(userMessage) {
     try {
       const response = await fetch(this.apiEndpoint, {
@@ -392,12 +453,6 @@ class ChatInterface {
       }
     } catch (error) {
       console.error('Erro ao salvar mensagem:', error);
-    }
-  }
-
-  hideEmptyStateMessage() {
-    if (this.elements.emptyMessage) {
-      this.elements.emptyMessage.style.display = 'none';
     }
   }
 
