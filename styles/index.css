@@ -1,0 +1,222 @@
+/* General style dados */
+.dados{
+  background: #F3F8FF;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding-top: 5rem;
+  padding-bottom: 5rem;
+}
+
+
+/* Style redirecionamento bem estar */
+.bem-estar{
+  display: flex;
+  align-items: center;
+  border: #4578F9 solid 1px;
+  border-radius: 100px;
+  height: 10px;
+  padding: 1rem;
+  text-decoration: none;
+  transition: scale 0.3s ;
+}
+
+/* Texto principal (no card) */
+.diferent-blue{
+  color: #1C5CFF;
+}
+
+.descrição{
+  font-size: 20.8px;
+  text-align: center;
+  color: #858585;
+  max-width: 50vw;
+  margin: 0;
+}
+
+/* Botões "Saiba mais" e "Começar agora" */
+.buttons{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 5rem;
+  margin-top: 3rem;
+  margin-bottom: 35px;
+}
+
+.a-btn-main{
+  border-radius: 30px;
+  min-width: 15rem;
+  min-height: 1.5rem;
+  font-size: 16px;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.saiba-mais{
+  color: #3E3D3D;
+  width: 11rem;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  transition: scale 0.3s;
+}
+
+/* Style cards dados */
+.cards{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3rem;
+}
+
+p{
+  margin: 0;
+}
+
+.card{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: #FFFFFF;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 20vw;
+  font-size: 1.3rem;
+  color: #A3A3A3;
+  box-shadow: 0 0 8px 0.1px rgba(0, 0, 0, 0.3);
+  transition: scale 0.3s;
+}
+
+.card:hover, .bem-estar:hover, .saiba-mais:hover{
+  scale: 1.01;
+}
+
+/* Titulo card dados */
+.title-card{
+  font-size: 1.8rem;
+  color: #373737;
+  margin: 0px;
+}
+
+/* General style projeto */
+.projeto{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding-top: 5rem;
+  text-align: left;
+  scale: 0.95;
+}
+
+/* Grade dos cards horizontais */
+.grid-card{
+  margin-top: 6rem;
+  display: grid;
+  max-width: 74rem;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 8rem 3rem;
+  scale: 0.91;
+}
+
+/* Style cards horizontais */
+.cards-horizontais{
+  display: grid;
+  gap: 20px;
+  padding: 35px;
+  min-width: 30rem;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+}
+
+.svg{
+  border-radius: 10px;
+  width: 3rem;
+  height: 3rem;
+  padding: 0.5rem;
+  background: #D9E4FF;
+}
+
+.card-IA-assistente{
+  min-width: 61rem;
+  box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
+  color: #686868;
+  display: grid;
+  gap: 15px;
+  justify-content: left;
+  background: #F2F6FF;
+  margin-top: 40px;
+}
+
+.card-IA-assistente h1{
+  text-align: left;
+}
+
+.IA::after{
+  content: url(../svgs/Robot2.svg);
+  display: inline-block;
+}
+
+/* Style card horizontal azul*/
+.verificado{
+  list-style: none;
+}
+
+.ul{
+  padding: 0;
+}
+.verificado::before{
+  content: "";
+  display: inline-block;
+  width: 23px;
+  height: 23px;
+  background: url(../svgs/Verificado.svg);
+  background-size: cover;
+  margin-right: 1rem;
+}
+
+.a-btn-IA{
+  width: 16rem;
+  margin-top: 2rem;
+}
+
+/* General style conheças recuros */
+.conheca-recursos{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 8rem;
+}
+
+.card-recurso{
+  min-height: 40vh;
+  width: 23vw;
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  margin-top: 10rem;
+}
+
+.card-recurso p, .card-recurso h1{
+  height: 5rem;
+}
+
+.a-btn-recurso{
+  margin: 20px;
+  width: 12rem;
+}
