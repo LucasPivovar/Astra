@@ -5,12 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Incio</title>
   <?php
-    include('./componentes/header.php')
+    include('./components/header.php')
   ?>
-  <link rel="stylesheet" href="./style/index.css">
+  <link rel="stylesheet" href="./styles/index.css">
 </head>
 <body>
   <main>
+
     <!-- dados -->
     <section class = "dados"> 
       <a class = "blue bem-estar" href = "chatbot.php">Uma nova abordagem para o bem estar ➜</a>
@@ -35,30 +36,31 @@
         </div>
       </div>
     </section>
+
     <!-- Projeto -->
     <section class = "projeto">
       <h1 class = "diferent-blue title"> Como a Astra pode ajudar você </h1>
       <p class = "descrição"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </p>
       <div class = "cards grid-card">
         <div class = "card card-IA cards-horizontais">
-          <img src="./svgs/robot.svg" alt="Figura Robô" class = "svg">
+          <img src="./assets/Robot.svg" alt="Figura Robô" class = "svg">
             <h1 class = "title-card"> Assistente Virtual Inteligente
             </h1>
             <p class = "IA"> Nossa IA personaliza o suporte com base nas suas necessidades, oferecendo técnicas práticas e orientações em momentos de crise. </p>
         </div>
         <div class = "card cards-horizontais card-meta">
-          <img src="./svgs/circulo.svg" alt="" class = "svg">
+          <img src="./assets/Circulo.svg" alt="" class = "svg">
             <h1 class = "title-card"> Sistema de Metas e Progresso </h1>
             <p> Estabeleça objetivos personalizados, acompanhe seu progresso e visualize sua evolução através de gráficos interativos.
             </p>
         </div>
         <div class = "card cards-horizontais card-comunidade">
-            <img src="./svgs/people.svg" alt="" class = "svg">
+            <img src="./assets/People.svg" alt="" class = "svg">
             <h1 class = "title-card"> Comunidade de Apoio </h1>
             <p> Conecte-se com pessoas que enfrentam desafios semelhantes, compartilhe experiências e encontre inspiração em histórias de superação.</p>
         </div>
         <div class = "card cards-horizontais card-vantagens">
-            <img src="./svgs/medalha.svg" alt="" class = "svg">
+            <img src="./assets/Medalha.svg" alt="" class = "svg">
             <h1 class = "title-card"> Reconhecimento e Recompensas </h1>
             <p> Conecte-se com pessoas que enfrentam desafios semelhantes, compartilhe experiências e encontre inspiração em histórias de superação. </p>
         </div>
@@ -72,28 +74,29 @@
           <li class = "verificado"> Recursos educativos sobre dependência</li>
           <li class = "verificado"> Lembretes motivacionais diários</li>
         </ul>
-        <a class = "button a-btn-IA a-btn-main" href ="chatbot.php"> Experimente o assistente </a>
+        <a class = "button a-btn-IA a-btn-main" href ="bot.php"> Experimente o assistente </a>
       </div>
     </section>
+
     <!-- Conheça Recursos -->
     <section class = "conheca-recursos">
       <h1 class = "diferent-blue title"> Conheça nossos recursos </h1>
       <p class = "descrição"> Ferramentas desenvolvidas para apoiar você em cada etapa da sua jornada de superação </p>
       <div class = "cards cards-recursos">
         <div class = "card card-recurso">
-          <img src="./svgs/circulo.svg" alt="" class = "svg">
+          <img src="./assets/Circulo.svg" alt="" class = "svg">
           <h1 class = "title-card "> Acompanhamento de Metas </h1>
           <p> Defina objetivos, acompanhe seu progresso e celebre suas conquistas </p>
           <a href="/" class = "button a-btn-recurso"> Acessar metas ➜ </a>
         </div>
         <div class = "card card-recurso">
-          <img src="./svgs/robot.svg" alt="" class = "svg">
+          <img src="./assets/Robot.svg" alt="" class = "svg">
           <h1 class = "title-card"> Assistente Virtual </h1>
           <p> Receba apoio e orientação personalizada 24 horas por dia </p>
           <a href="chatbot.php" class = "button a-btn-recurso "> Falar com assistente ➜ </a>
         </div>
         <div class = "card card-recurso">
-          <img src="./svgs/circulo.svg" alt="" class = "svg">
+          <img src="./assets/Circulo.svg" alt="" class = "svg">
           <h1 class = "title-card"> Comunidade </h1>
           <p> Conecte-se com outros membros, compartilhe experiências e histórias </p>
           <a href="/" class = "button a-btn-recurso"> Ver Comiunidade ➜ </a>
