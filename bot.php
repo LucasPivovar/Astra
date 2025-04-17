@@ -3,22 +3,17 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Ensure session is started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Include database connection
 require_once __DIR__ . '/db.php';
 
-// Check if user is logged in
 $isLoggedIn = isset($_SESSION['user_id']);
 
-// Handle AJAX requests
 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
     header('Content-Type: application/json');
     
-    // If not logged in, return error
     if (!$isLoggedIn) {
         echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
         exit;
@@ -26,13 +21,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     
     $user_id = $_SESSION['user_id'];
     
-    // Return user ID along with response
     $responseData = [
         'success' => true,
         'user_id' => $user_id
     ];
-    
-    // Fetch conversations for this user if we have a database connection
     if (isset($pdo)) {
         try {
             $stmt = $pdo->prepare("
@@ -47,12 +39,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
             
             $responseData['conversations'] = $conversations;
         } catch (Exception $e) {
-            // Log the error but continue with empty conversations
             error_log('Error fetching conversations: ' . $e->getMessage());
             $responseData['conversations'] = [];
         }
     } else {
-        // No database connection available
         $responseData['conversations'] = [];
         $responseData['db_message'] = 'Database connection not available';
     }
@@ -60,9 +50,6 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQU
     echo json_encode($responseData);
     exit;
 }
-
-// For regular page access (not AJAX)
-// Redirect to login page if not logged in
 if (!$isLoggedIn) {
     $_SESSION['redirect_after_login'] = 'bot.php';
     header('Location: index.php');
@@ -76,7 +63,7 @@ if (!$isLoggedIn) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AstraAI ChatBot</title>
     <link rel="stylesheet" href="./styles/bot.css">
-    <!-- Add debugging script -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
     function checkLoginStatus() {
         console.log('Session check: User ' + (<?= json_encode($isLoggedIn) ?> ? 'is logged in' : 'is NOT logged in'));
@@ -97,7 +84,6 @@ if (!$isLoggedIn) {
                     <span>+</span> Nova Conversa
                 </button>
                 <ul id="conversation-list">
-                    <!-- As conversas serão carregadas aqui dinamicamente -->
                 </ul>
             </div>
         </aside>

@@ -81,8 +81,16 @@ try {
     
     $context .= "\nUsuário: " . $userMessage . "\nAssistente:";
     
-    // Make real API call to Gemini
-    $botResponse = callGeminiAPI($context, $apiKey);
+    // Importar o analisador de emoções
+    require_once __DIR__ . '/api/emotion_analyzer.php';
+    
+    // Analisar emoções e obter resposta aprimorada
+    // A função enhancedCallGeminiAPI define $emotionData como variável global
+    $botResponse = enhancedCallGeminiAPI($context, $apiKey, $userMessage);
+    
+    // Variável $emotionData agora está disponível graças à declaração global na função
+    // Salvar os dados de emoção no banco de dados
+    saveEmotionHistory($pdo, $userId, $conversationId, $GLOBALS['emotionData']);
     
     // Save the message to database
     saveToDatabase($pdo, $userId, $conversationId, $userMessage, $botResponse);

@@ -44,4 +44,64 @@ document.addEventListener('DOMContentLoaded', () => {
       modal.style.display = 'none';
     }
   });
+
+  // Código para o modal de perfil do usuário
+  const userProfileBtn = document.getElementById('userProfileBtn');
+  const userProfileModal = document.getElementById('userProfileModal');
+  const closeProfileModal = document.getElementById('closeProfileModal');
+  const viewProfileBtn = document.getElementById('viewProfileBtn');
+  const settingsBtn = document.getElementById('settingsBtn');
+  
+  // Verifica se os elementos existem antes de adicionar os event listeners
+  if (userProfileBtn && userProfileModal) {
+    // Abrir modal quando clicar no nome do usuário
+    userProfileBtn.addEventListener('click', function(e) {
+      e.preventDefault(); // Previne comportamento padrão se for um link
+      console.log('Botão de perfil clicado'); // Debug
+      
+      // Mostra o modal independentemente do dispositivo
+      userProfileModal.style.display = 'flex';
+    });
+    
+    // Manipuladores para as opções do perfil
+    if (viewProfileBtn) {
+      viewProfileBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Aqui você pode implementar a navegação para a página de perfil
+        alert('Funcionalidade de visualização de perfil será implementada em breve!');
+      });
+    }
+    
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Aqui você pode implementar a navegação para a página de configurações
+        alert('Funcionalidade de configurações será implementada em breve!');
+      });
+    }
+    
+    // Fechar modal quando clicar no botão fechar
+    if (closeProfileModal) {
+      closeProfileModal.addEventListener('click', function() {
+        userProfileModal.style.display = 'none';
+      });
+    }
+    
+    // Fechar o modal quando clicar fora dele
+    window.addEventListener('click', function(event) {
+      if (event.target === userProfileModal) {
+        userProfileModal.style.display = 'none';
+      }
+    });
+  } else {
+    console.error('Elementos do modal de perfil não encontrados');
+  }
+  
+  // Atualizar comportamento se a janela for redimensionada
+  window.addEventListener('resize', function() {
+    if (userProfileModal && userProfileModal.style.display === 'flex' && window.innerWidth < 768) {
+      // Opcional: você pode decidir se quer fechar o modal em telas muito pequenas
+      // userProfileModal.style.display = 'none';
+    }
+  });
 });

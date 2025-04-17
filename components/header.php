@@ -39,22 +39,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Registro
     if (isset($_POST['register'])) {
         $username = sanitizeInput($_POST['username']);
+        $email = sanitizeInput($_POST['email']);
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
 
-        if ($password !== $confirm_password) {
+        // Validação de email
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $error = 'Endereço de email inválido';
+        } 
+        // Validação de senhas
+        elseif ($password !== $confirm_password) {
             $error = 'Senhas não coincidem';
         } else {
-            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
-            $stmt->execute([$username]);
+            // Verifica se usuário já existe
+            $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+            $stmt->execute([$username, $email]);
 
             if ($stmt->rowCount() > 0) {
-                $error = 'Usuário já existe';
+                $error = 'Usuário ou email já existem';
             } else {
                 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
                 try {
-                    $stmt = $pdo->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-                    $stmt->execute([$username, $hashedPassword]);
+                    $stmt = $pdo->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
+                    $stmt->execute([$username, $email, $hashedPassword]);
                     $successMessage = 'Registro realizado! Faça login.';
                 } catch (PDOException $e) {
                     $error = 'Erro no registro: ' . $e->getMessage();
@@ -96,49 +103,113 @@ function sanitizeInput($input) {
 
     <?php if ($isLoggedIn): ?>
       <div class="user-panel">
-        <span ><?= htmlspecialchars($_SESSION['username']) ?></span>
-        <form method="POST" action="index.php" style="display: inline;">
-          <input type="hidden" name="logout" value="1">
-        </form>
+        <span id="userProfileBtn"><?= htmlspecialchars($_SESSION['username']) ?></span>
       </div>
+      
+      <!-- Modal do perfil do usuário -->
+      <section id="userProfileModal" class="modalContainer">
+        <div class="backgroundModal profileModal">
+          <h2>Perfil do Usuário</h2>
+          <p id="userProfileOpen">Bem-vindo(a), <?= htmlspecialchars($_SESSION['username']) ?>!</p>
+          
+          <div class="profile-options">
+            <!-- Opção de Perfil -->
+            <div class="profile-option-item">
+              <a href="#" id="viewProfileBtn" class="profile-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span>Meu Perfil</span>
+              </a>
+            </div>
+            
+            <!-- Opção de Configurações -->
+            <div class="profile-option-item">
+              <a href="#" id="settingsBtn" class="profile-link">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="3"></circle>
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+                <span>Configurações</span>
+              </a>
+            </div>
+            
+            <!-- Opção de Logout -->
+            <div class="profile-option-item">
+              <form method="POST" action="index.php" class="logout-form">
+                <input type="hidden" name="logout" value="1">
+                <button type="submit" class="profile-link logout-btn">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                  </svg>
+                  <span>Sair</span>
+                </button>
+              </form>
+            </div>
+          </div>
+          
+          <button id="closeProfileModal" class="button">Fechar</button>
+        </div>
+      </section>
     <?php else: ?>
       <button id="btnLogin" class="loginButton button">Entre no Astra</button>
-    <?php endif; ?>
-
-    <!-- Modal de login só é necessário se o usuário não estiver logado -->
-    <?php if (!$isLoggedIn): ?>
-    <section id="modal" class="modalContainer">
-      <div class="backgroundModal">
-        <?php if (!empty($error)): ?>
-          <div class="alert error"><?= $error ?></div>
-        <?php endif; ?>
-        <?php if (!empty($successMessage)): ?>
-          <div class="alert success"><?= $successMessage ?></div>
-        <?php endif; ?>
-
-        <h2 id="titleModal">Entre em Sua Conta</h2>
-        <form method="POST" id="formLogin" action="index.php">
-          <input type="hidden" name="login" value="1">
-          <label for="login_username">Usuário</label>
-          <input type="text" id="login_username" name="username" required>
-          <label for="login_password">Senha</label>
-          <input type="password" id="login_password" name="password" required>
-          <button type="submit" class="button">Fazer Login</button>
-        </form>
-
-        <form method="POST" id="formSignUp" action="index.php" style="display: none">
-          <input type="hidden" name="register" value="1">
-          <label for="signup_username">Usuário</label>
-          <input type="text" id="signup_username" name="username" required>
-          <label for="signup_password">Senha</label>
-          <input type="password" id="signup_password" name="password" required>
-          <label for="confirm_password">Confirme a Senha</label>
-          <input type="password" id="confirm_password" name="confirm_password" required>
-          <button type="submit" class="button">Registrar</button>
-        </form>
-        <p id="textSignUp">Não tem uma conta? <span id="signUp" class="register blue">Registre-se agora</span></p>
-      </div>
-    </section>
+      
+      <!-- Modal de login/cadastro -->
+      <section id="modal" class="modalContainer">
+        <div class="backgroundModal">
+          <h2 id="titleModal">Entre em Sua Conta</h2>
+          
+          <?php if (!empty($error)): ?>
+            <div class="alert error"><?= $error ?></div>
+          <?php endif; ?>
+          
+          <?php if (!empty($successMessage)): ?>
+            <div class="alert success"><?= $successMessage ?></div>
+          <?php endif; ?>
+          
+          <form id="formLogin" method="POST" action="">
+            <div>
+              <span class="label userLoginLabel">Nome de usuário</span>
+              <input type="text" name="username" required>
+            </div>
+            <br>
+            <div>
+              <span class="label">Senha</span>
+              <input type="password" name="password" required>
+            </div>
+            <button type="submit" name="login" class="button formButton">Entrar</button>
+          </form>
+          
+          <form id="formSignUp" method="POST" action="">
+            <div>
+              <span class="label userLabel">Usuário</span>
+              <input type="text" name="username" required>
+            </div>
+            <br>
+            <div>
+              <span class="label">Email</span>
+              <input type="email" name="email" required>
+            </div>
+            <br>
+            <div>
+              <span class="label">Senha</span>
+              <input type="password" name="password" required>
+            </div>
+            <br>
+            <div>
+              <span class="label">Confirmar</span>
+              <input type="password" name="confirm_password" required>
+            </div>
+            <button type="submit" name="register" class="button formButton">Cadastrar</button>
+          </form>
+          
+          <br>
+          <p id="textSignUp">Não tem uma conta? <span id="signUp" class="register blue">Registre-se agora</span></p>
+        </div>
+      </section>
     <?php endif; ?>
   </nav>
   <script src="./scripts/header.js"></script>

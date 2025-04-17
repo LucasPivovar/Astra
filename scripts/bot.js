@@ -7,10 +7,10 @@ class ChatInterface {
       conversationList: document.getElementById('conversation-list')
     };
     this.apiEndpoint = 'gemini.php';
-    this.typingSpeed = 30; // milissegundos por caractere
+    this.typingSpeed = 30; 
     this.currentConversationId = null;
+    this.isListening = false;
 
-    // Verificar autenticação antes de inicializar
     this.checkAuthAndInitialize();
   }
 
@@ -37,7 +37,6 @@ class ChatInterface {
         return;
       }
       
-      // Obter ID do usuário da sessão
       this.userId = data.user_id;
       
       if (!this.userId) {
@@ -46,11 +45,10 @@ class ChatInterface {
         return;
       }
       
-      // Configurar a interface do chat
       this.initEventListeners();
+      this.initSpeechRecognition(); // Inicializar reconhecimento de voz
       await this.loadConversations();
       
-      // Carregar conversa existente ou iniciar nova
       if (data.conversations && data.conversations.length > 0) {
         this.loadSpecificConversation(data.conversations[0].id_conversa);
       } else {
@@ -59,6 +57,127 @@ class ChatInterface {
     } catch (error) {
       console.error('Falha na verificação de autenticação:', error);
       window.location.href = 'index.php';
+    }
+  }
+
+  // Substitua o método initSpeechRecognition() existente pelo seguinte:
+  toggleSpeechRecognition() {
+    if (!this.recognition) {
+      console.error('Reconhecimento de voz não inicializado');
+      return;
+    }
+  
+    try {
+      if (this.isListening) {
+        this.recognition.stop();
+        this.isListening = false;
+      } else {
+        // Reiniciar o objeto de reconhecimento para evitar problemas de estado
+        this.recognition.abort(); // Força a parada de qualquer sessão pendente
+        
+        // Pequeno atraso para garantir que a sessão anterior foi encerrada
+        setTimeout(() => {
+          try {
+            this.recognition.start();
+            this.isListening = true;
+            this.toggleMicrophoneState(true);
+          } catch (error) {
+            console.error('Erro ao iniciar reconhecimento:', error);
+            this.toggleMicrophoneState(false);
+            
+            // Verifica se o erro é de permissão e notifica o usuário
+            if (error.name === 'NotAllowedError') {
+              alert('Permissão para usar o microfone negada. Por favor, permita o acesso ao microfone nas configurações do seu navegador.');
+            }
+          }
+        }, 200);
+      }
+    } catch (error) {
+      console.error('Erro ao alternar o reconhecimento de voz:', error);
+      this.isListening = false;
+      this.toggleMicrophoneState(false);
+    }
+  }
+  
+  // Modificações no método initSpeechRecognition
+  initSpeechRecognition() {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      console.warn('Reconhecimento de voz não suportado neste navegador');
+      return;
+    }
+  
+    // Criar uma nova instância do objeto de reconhecimento
+    this.recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    this.recognition.lang = 'pt-BR';
+    this.recognition.continuous = false;
+    this.recognition.interimResults = false;
+    
+    this.recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      console.log('Texto reconhecido:', transcript);
+      this.elements.userInput.value = transcript;
+      
+      // Opcional: enviar automaticamente após reconhecimento
+      // this.sendMessage();
+    };
+    
+    this.recognition.onerror = (event) => {
+      console.error('Erro no reconhecimento de voz:', event.error);
+      
+      // Tratamento específico para erros comuns
+      if (event.error === 'network') {
+        console.warn('Problema de rede durante o reconhecimento de voz. Verifique sua conexão.');
+      } else if (event.error === 'not-allowed') {
+        console.warn('Permissão para o microfone negada pelo usuário ou sistema.');
+      }
+      
+      this.isListening = false;
+      this.toggleMicrophoneState(false);
+    };
+    
+    this.recognition.onend = () => {
+      console.log('Reconhecimento de voz encerrado');
+      this.isListening = false;
+      this.toggleMicrophoneState(false);
+    };
+    
+    // Criando elemento do microfone
+    this.micButton = document.createElement('button');
+    this.micButton.id = 'mic-button';
+    this.micButton.type = 'button';
+    this.micButton.className = 'mic-button';
+    this.micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+    this.micButton.title = 'Ativar reconhecimento de voz';
+    this.micButton.setAttribute('aria-label', 'Ativar reconhecimento de voz');
+    
+    // Procurando o contêiner de entrada e inserindo o botão antes do botão de enviar
+    const inputContainer = document.querySelector('.input-container');
+    const sendButton = document.getElementById('send-button');
+    
+    if (inputContainer && sendButton) {
+      inputContainer.insertBefore(this.micButton, sendButton);
+      
+      // Adicionar evento de clique
+      this.micButton.addEventListener('click', () => {
+        console.log('Botão de microfone clicado. Estado atual:', this.isListening ? 'ouvindo' : 'não ouvindo');
+        this.toggleSpeechRecognition();
+      });
+    } else {
+      console.error('Contêiner de entrada ou botão de enviar não encontrado no DOM');
+    }
+  }
+
+  toggleMicrophoneState(isActive) {
+    this.isListening = isActive;
+    
+    if (isActive) {
+      this.micButton.classList.add('listening');
+      this.micButton.innerHTML = '<i class="fas fa-microphone-slash"></i>';
+      this.micButton.title = 'Parar reconhecimento de voz';
+    } else {
+      this.micButton.classList.remove('listening');
+      this.micButton.innerHTML = '<i class="fas fa-microphone"></i>';
+      this.micButton.title = 'Ativar reconhecimento de voz';
     }
   }
 
@@ -71,18 +190,15 @@ class ChatInterface {
   }
 
   initEventListeners() {
-    // Enviar mensagem ao pressionar Enter
     this.elements.userInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') this.sendMessage();
     });
 
-    // Enviar mensagem ao clicar no botão
     const sendButton = document.getElementById('send-button');
     if (sendButton) {
       sendButton.addEventListener('click', () => this.sendMessage());
     }
 
-    // Iniciar nova conversa
     const clearHistoryBtn = document.getElementById('clear-history-btn');
     if (clearHistoryBtn) {
       clearHistoryBtn.addEventListener('click', () => this.startNewConversation());
@@ -108,33 +224,47 @@ class ChatInterface {
       const conversationList = this.elements.conversationList;
       if (!conversationList) return;
       
-      conversationList.innerHTML = ''; // Limpar lista atual
+      conversationList.innerHTML = ''; 
 
-      // Exibir mensagem se não houver conversas
       if (!data.conversations || data.conversations.length === 0) {
         const emptyItem = document.createElement('li');
         emptyItem.textContent = 'Nenhuma conversa encontrada';
         emptyItem.classList.add('empty-list');
         conversationList.appendChild(emptyItem);
         
-        // Exibir mensagem vazia se não há conversas
         this.showEmptyMessage();
         return;
       }
 
-      // Criar itens para cada conversa
       data.conversations.forEach(conversation => {
         const listItem = document.createElement('li');
+        listItem.className = 'conversation-item';
+        
+        const textContainer = document.createElement('div');
+        textContainer.className = 'conversation-text';
+        
         const date = new Date(conversation.last_message_time);
-        listItem.textContent = `Conversa ${date.toLocaleDateString()}`;
+        textContainer.textContent = `Conversa ${date.toLocaleDateString()}`;
+        
+        const removeButton = document.createElement('button');
+        removeButton.className = 'remove-conversation-btn';
+        removeButton.innerHTML = '<i class="fas fa-trash"></i>';
+        removeButton.title = 'Remover conversa';
+        
+        removeButton.addEventListener('click', (e) => {
+          e.stopPropagation(); 
+          
+          if (confirm('Tem certeza que deseja excluir esta conversa?')) {
+            this.deleteConversation(conversation.id_conversa);
+          }
+        });
+        
         listItem.dataset.idConversa = conversation.id_conversa;
         
-        // Destacar conversa atual
         if (this.currentConversationId === conversation.id_conversa) {
           listItem.classList.add('active-conversation');
         }
 
-        // Adicionar evento de clique
         listItem.addEventListener('click', () => {
           document.querySelectorAll('#conversation-list li').forEach(item => {
             item.classList.remove('active-conversation');
@@ -143,10 +273,11 @@ class ChatInterface {
           this.loadSpecificConversation(conversation.id_conversa);
         });
 
+        listItem.appendChild(textContainer);
+        listItem.appendChild(removeButton);
         conversationList.appendChild(listItem);
       });
       
-      // Verificar se deve mostrar mensagem vazia
       this.checkEmptyState();
     } catch (error) {
       console.error('Erro ao carregar conversas:', error);
@@ -164,7 +295,6 @@ class ChatInterface {
 
   async loadSpecificConversation(idConversa) {
     try {
-      // Atualizar ID da conversa atual
       this.currentConversationId = idConversa;
       
       const response = await fetch(`api/get_conversation.php?id_conversa=${idConversa}`, {
@@ -180,35 +310,28 @@ class ChatInterface {
       const data = await response.json();
       if (!data.success) throw new Error(data.message);
   
-      // Limpar chat atual
       this.clearChat();
   
-      // Exibir mensagens da conversa
       if (data.messages && data.messages.length > 0) {
         data.messages.forEach(message => {
-          // Usar o novo formato de mensagens
           if (message.type && message.content) {
             this.displayMessage(message.type, message.content, false);
           }
         });
         
-        // Ocultar mensagem vazia pois há mensagens
         this.hideEmptyStateMessage();
       } else {
-        // Mostrar estado vazio se não houver mensagens
         this.showEmptyMessage();
       }
   
       this.scrollToBottom();
       
-      // Atualizar UI para refletir conversa atual
       document.querySelectorAll('#conversation-list li').forEach(item => {
         item.classList.toggle('active-conversation', item.dataset.idConversa === idConversa);
       });
     } catch (error) {
       console.error('Erro ao carregar conversa específica:', error);
       
-      // Mostrar mensagem de erro no chat
       this.elements.chatBox.innerHTML = '';
       const errorElement = document.createElement('div');
       errorElement.className = 'error-message';
@@ -218,23 +341,34 @@ class ChatInterface {
   }
 
   clearChat() {
+    const emptyMessageElement = this.elements.emptyMessage;
     this.elements.chatBox.innerHTML = '';
+    
+    if (emptyMessageElement) {
+      this.elements.chatBox.appendChild(emptyMessageElement);
+      this.elements.emptyMessage = emptyMessageElement;
+    } else {
+      const newEmptyMessage = document.createElement('div');
+      newEmptyMessage.id = 'empty-message';
+      newEmptyMessage.className = 'welcome-message';
+      newEmptyMessage.textContent = 'Aqui para apoiar você na jornada contra o vício. Conte-me como está se sentindo hoje.';
+      newEmptyMessage.style.display = 'none';
+      
+      this.elements.chatBox.appendChild(newEmptyMessage);
+      this.elements.emptyMessage = newEmptyMessage;
+    }
   }
 
   startNewConversation() {
-    // Gerar novo ID de conversa
     const newConversationId = this.generateUUID();
     
-    // Criar nova conversa no banco
     this.createNewConversation(newConversationId).then(success => {
       if (success) {
         this.currentConversationId = newConversationId;
         this.clearChat();
         
-        // Mostrar mensagem de boas-vindas
         this.showEmptyMessage();
         
-        // Remover seleção de todos os itens da lista
         document.querySelectorAll('#conversation-list li').forEach(item => {
           item.classList.remove('active-conversation');
         });
@@ -247,10 +381,16 @@ class ChatInterface {
     });
   }
   
-  // Novo método para verificar se deve mostrar mensagem vazia
   checkEmptyState() {
-    const hasActiveConversation = document.querySelectorAll('#conversation-list li.active-conversation').length > 0;
-    const hasMessages = this.elements.chatBox.children.length > 0;
+    const hasActiveConversation = this.currentConversationId !== null;
+    
+    const messageElements = Array.from(this.elements.chatBox.children).filter(
+      el => el.id !== 'empty-message' && 
+           !el.classList.contains('welcome-message') &&
+           !el.classList.contains('error-message')
+    );
+    
+    const hasMessages = messageElements.length > 0;
     
     if (!hasActiveConversation || (hasActiveConversation && !hasMessages)) {
       this.showEmptyMessage();
@@ -259,14 +399,12 @@ class ChatInterface {
     }
   }
   
-  // Mostrar mensagem vazia
   showEmptyMessage() {
     if (this.elements.emptyMessage) {
       this.elements.emptyMessage.style.display = 'block';
     }
   }
   
-  // Ocultar mensagem vazia
   hideEmptyStateMessage() {
     if (this.elements.emptyMessage) {
       this.elements.emptyMessage.style.display = 'none';
@@ -297,47 +435,75 @@ class ChatInterface {
     }
   }
 
+  deleteConversation(conversationId) {
+    fetch('api/delete_conversation.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({
+        id_conversa: conversationId,
+        user_id: this.userId
+      })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error(`Erro HTTP! Status: ${response.status}`);
+      return response.json();
+    })
+    .then(data => {
+      if (data.success) {
+        const listItem = document.querySelector(`#conversation-list li[data-id-conversa="${conversationId}"]`);
+        if (listItem) {
+          listItem.remove();
+        }
+        
+        this.loadConversations();
+        
+        if (this.currentConversationId === conversationId) {
+          this.startNewConversation();
+        }
+      } else {
+        alert('Erro ao excluir conversa: ' + (data.message || 'Erro desconhecido'));
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao excluir conversa:', error);
+      alert('Falha ao excluir conversa. Por favor, tente novamente.');
+    });
+  }
+
   sendMessage() {
     const userInput = this.elements.userInput.value.trim();
   
     if (!userInput || !this.currentConversationId) return;
   
-    // Adicionar um ID único para esta mensagem
     const messageId = `msg_${Date.now()}`;
     
-    // Desabilitar o botão de envio temporariamente para evitar duplos cliques
     const sendButton = document.getElementById('send-button');
     if (sendButton) {
       sendButton.disabled = true;
-      setTimeout(() => { sendButton.disabled = false; }, 1000); // Reabilitar após 1 segundo
+      setTimeout(() => { sendButton.disabled = false; }, 1000); 
     }
   
-    // Ocultar mensagem de boas-vindas
     this.hideEmptyStateMessage();
     
-    // Exibir mensagem do usuário imediatamente
     this.displayMessage('user', userInput);
     this.clearUserInput();
   
-    // Inicializar o conjunto de mensagens enviadas se ainda não existir
     if (!window.sentMessages) window.sentMessages = new Set();
     
-    // Verificar se esta mensagem específica já foi salva
     const userMessageHash = `user_${userInput.substring(0, 50)}_${this.currentConversationId}`;
     if (!window.sentMessages.has(userMessageHash)) {
       window.sentMessages.add(userMessageHash);
       
-      // Salvar mensagem do usuário
       this.saveMessageToServer('user', userInput);
     }
   
-    // Obter resposta da IA
     this.fetchBotResponse(userInput)
       .then(responseText => {
-        // Exibir resposta do bot com efeito de digitação
         this.displayMessage('bot', responseText, true);
         
-        // Criar ID único para a resposta do bot
         const botMessageHash = `bot_${responseText.substring(0, 50)}_${this.currentConversationId}`;
         if (!window.sentMessages.has(botMessageHash)) {
           window.sentMessages.add(botMessageHash);
@@ -349,7 +515,6 @@ class ChatInterface {
         const errorText = 'Falha ao buscar resposta. Por favor, tente novamente mais tarde.';
         this.displayMessage('bot', errorText, true);
         
-        // Também salvar mensagem de erro com verificação
         const errorHash = `error_${errorText}_${this.currentConversationId}`;
         if (!window.sentMessages.has(errorHash)) {
           window.sentMessages.add(errorHash);
@@ -447,7 +612,6 @@ class ChatInterface {
       const data = await response.json();
       if (!data.success) throw new Error(data.message || 'Erro ao salvar mensagem');
       
-      // Recarregar lista de conversas após respostas do bot
       if (role === 'bot') {
         this.loadConversations();
       }
@@ -466,7 +630,6 @@ class ChatInterface {
   }
 }
 
-// Inicializar a interface de chat quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', () => {
   new ChatInterface();
 });
