@@ -1,198 +1,85 @@
-@media (min-width: 1024px) {
-  body{
-    font-family: "Inter", sans-serif;
-    margin: 0px;
-    height: 100vh;
-    width: 100%;
-  }
-
-  nav{
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 1.2rem;
-  }
-  
-  .nome-empresa{
-    position: relative;
-    left: -20px;
-  }
-
-  .title{
-    font-family: "Libre Baskerville", sans-serif;
-    text-align: center;
-    font-size: 44px;
-    margin: 0px;
-  }
-
-  .nome{
-    font-size: 2rem;
-    margin: 0px;
-    cursor: default;
-  }
-  
-  .btn-menu{
-    list-style: none;
-    display: flex;
-    gap: 70px;
-    cursor: default;
-    padding: 0;
-  }
-
-  .lineA{
-    text-decoration: none;
-    color: #7C7C7C;
-    font-size: 1rem;
-  }
-  .lineA::after{
-    content:'';
-    display: block;
-    background-color:currentColor;
-    height: 2px;
-    width: 0%;
-    transition: width 1.2s;
-  }
-
-  .lineA:hover::after, .lineA:hover{
-    width: 100%;
-    opacity: 0.8;
-  }
-
-  .button{
-    background: #4578F9;
-    color: #FFFFFF;
-    padding: 0.5rem;
-    border-radius: 8px;
-    border: none;
-    height: 2rem;
-    width: 8rem;
-    font-size: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: scale 0.3s;
-    text-decoration: none;
-  }
-
-  .button:hover{
-    opacity: 0.98;
-    scale: 1.01;
-  }
-
-  /* Estilo do Modal */
-  .modalContainer{
-    display: none;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-    background: rgba(0, 0, 0, 75%);
-    z-index: 10;
-  }
-  
-  .backgroundModal{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #F3F8FF;
-    padding: 3rem;
-    border-radius: 8px;
-    min-width: 19rem;
-    width: 19rem;
-    animation: modalAnimation 0.6s ease;
-  }
-
-  @keyframes modalAnimation {
-    from{
-      opacity: 0;
-      transform: translate(-50%, -60%);
-    }
-    to{
-      opacity: 1;
-      transform: translate(-50%, -50%);
-    }
-  }
-  
-  form{
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-
-  h2{
-    margin:0px;
-    color: #1C5CFF;
-    font-size: 27px;
-  }
-
-  input{
-    border: 1px solid #1C5CFF;
-    border-radius: 8px;
-    background: transparent;
-    height: 30px;
-    font-size: 16px;
-    color: #858585;
-    width: 20rem;
-    padding-left: 10px;
-  }
-
-  input:focus{
-    outline: none;
-  }
-
-  .label{
-    color: #1C5CFF;
-    background: #F3F8FF;
-    position: relative;
-    left: 15px;
-    top: 11px;
-    width: 3rem;
-    padding: 0px 8px 0px 8px;
-  }
-
-  .userLoginLabel{
-    position: relative;
-    width: 8rem;
-  }
-
-  .userLabel{
-    width: 3.8rem;
-    left: -120px;
-  }
-
-  .formButton{
-    font-size: 18px;
-    margin-top: 2rem;
-    width: 9rem;
-    height: 2.5rem;
-  }
-
-  .blue{
-    color: #4578F9;
-  }
-
-  .register{
-    cursor: pointer;
-  }
-
-  #formSignUp{
-    display: none;
-  }
+/* Estilos gerais */
+body {
+  font-family: "Inter", sans-serif;
+  margin: 0px;
+  height: 100vh;
+  width: 100%;
 }
 
+.title {
+  font-family: "Libre Baskerville", sans-serif;
+  text-align: center;
+  margin: 0;
+}
+
+.nome-empresa {
+  margin: 0px;
+  cursor: default;
+}
+
+.btn-menu {
+  list-style: none;
+  cursor: default;
+  padding: 0;
+}
+
+.lineA {
+  text-decoration: none;
+}
+
+.button {
+  background: #5052CB;
+  color: #FFFFFF;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+form {
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h2 {
+  margin:0px;
+}
+
+input {
+  border: 1px solid #595BD4;
+  border-radius: 8px;
+  background: transparent;
+  color: #858585;
+}
+
+input:focus {
+  outline: none;
+}
+
+.label {
+  color: #595BD4;
+  background: #F3F8FF;
+  position: relative;
+}
+
+.purple {
+  color: #595BD4;
+}
+
+.register{
+  cursor: pointer;
+}
+
+#formSignUp{
+  display: none;
+}
+
+/* Estilo Modal Perfil */
 #userProfileModal {
   display: none;
   position: fixed;
@@ -291,3 +178,309 @@
   font-family: "Libre Baskerville", sans-serif;
   cursor: pointer;
 }
+
+/* Animações */
+@keyframes modalAnimation {
+  from{
+    opacity: 0;
+    transform: translate(-50%, -60%);
+  }
+  to{
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Resposividade desktop */
+@media (min-width: 1024px) {
+
+  .nome-empresa {
+    position: relative;
+    left: -20px;
+    font-size: 2rem;
+  }
+
+  .title {
+    font-size: 44px;
+  }
+  
+  .btn-menu {
+    display: flex;
+    gap: 70px;
+  }
+
+  .lineA {
+    color: #7C7C7C;
+    font-size: 1rem;
+  }
+
+  .lineA::after {
+    content:'';
+    display: block;
+    background-color:currentColor;
+    height: 2px;
+    width: 0%;
+    transition: width 1.2s;
+  }
+
+  .lineA:hover::after, .lineA:hover {
+    width: 100%;
+    opacity: 0.8;
+  }
+
+  .button {
+    font-size: 15px;
+    height: 2rem;
+    width: 8rem;
+    transition: scale 0.3s;
+  }
+
+  .button:hover {
+    opacity: 0.98;
+    scale: 1.01;
+  }
+
+  /* Estilo do Modal */
+  .modalContainer {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 75%);
+    z-index: 10;
+  }
+  
+  .backgroundModal {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #F3F8FF;
+    padding: 3rem;
+    border-radius: 8px;
+    min-width: 19rem;
+    width: 19rem;
+    animation: modalAnimation 0.6s ease;
+  }
+  
+  form {
+    flex-direction: column;
+  }
+
+  h2 {
+    color: #595BD4;
+    font-size: 27px;
+  }
+
+  input {
+    height: 30px;
+    font-size: 16px;
+    width: 20rem;
+    padding-left: 10px;
+  }
+
+  .label {
+    left: 15px;
+    top: 11px;
+  }
+
+  .userLoginLabel {
+    width: 8rem;
+  }
+
+  .userLabel {
+    width: 3.8rem;
+  }
+
+  .formButton {
+    font-size: 18px;
+    margin-top: 2rem;
+    width: 9rem;
+    height: 2.5rem;
+  }
+
+}
+
+/* Responsividade Mobile*/
+
+@media screen and (max-width: 1023px){
+  body{
+    font-family: "Inter", sans-serif;
+    margin: 0px;
+  }
+
+  nav{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 1.2rem;
+    height: 50px;
+    width: 100%;
+  }
+  
+  .nome-empresa{
+    position: relative;
+    left: -10px;
+  }
+
+  .title.nome-empresa{
+    font-family: "Libre Baskerville", sans-serif;
+    text-align: center;
+    font-size: 1rem;
+    margin: 0px;
+  }
+  
+  .btn-menu{
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    display: flex;
+    gap: 8px;
+    cursor: default;
+    padding: 0;
+  }
+
+  .lineA{
+    text-decoration: none;
+    color: #7C7C7C;
+    font-size: 10px;
+  }
+
+
+  .button{
+    background: #4578F9;
+    color: #FFFFFF;
+    margin-left: 5px;
+    padding: 0.5rem;
+    border-radius: 8px;
+    border: none;
+    height: 1.7rem;
+    width: 4.5rem;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: scale 0.3s;
+    text-decoration: none;
+  }
+
+  .button:hover{
+    opacity: 0.98;
+    scale: 1.01;
+  }
+
+  /* Estilo do Modal */
+  .modalContainer{
+    display: flex;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    bottom: 100px;
+    background: rgba(0, 0, 0, 75%);
+    z-index: 10;
+  }
+  
+  .backgroundModal{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    top: 50vmax;
+    left: 50vmin;
+    transform: translate(-50%, -50%);
+    background-color: #F3F8FF;
+    padding: 3rem;
+    border-radius: 8px;
+    min-width: 16rem;
+    width: 16rem;
+    animation: modalAnimation 0.6s ease;
+  }
+
+
+  form{
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h2{
+    margin:0px;
+    color: #595BD4;
+    font-size: 27px;
+  }
+
+  input{
+    border: 1px solid #595BD4;
+    border-radius: 8px;
+    background: transparent;
+    height: 30px;
+    font-size: 16px;
+    color: #858585;
+    width: 20rem;
+    padding-left: 10px;
+  }
+
+  input:focus{
+    outline: none;
+  }
+
+  .label{
+    color: #595BD4;
+    background: #F3F8FF;
+    position: relative;
+    left: 15px;
+    top: 11px;
+    width: 3rem;
+    padding: 0;
+  }
+
+  .userLoginLabel{
+    position: relative;
+    width: 8rem;
+  }
+
+  .userLabel{
+    width: 3.8rem;
+    left: -120px;
+  }
+
+  .formButton{
+    font-size: 18px;
+    margin-top: 2rem;
+    width: 9rem;
+    height: 2.5rem;
+  }
+
+  .purple{
+    color: #595BD4;
+  }
+
+  .register{
+    cursor: pointer;
+  }
+
+  #formSignUp{
+    display: none;
+  }
+}
+

@@ -1,39 +1,50 @@
+body {
+  overflow-x: hidden;
+  height: auto;
+  width: auto;
+}
 /* General style dados */
 .dados{
-  background: #F3F8FF;
+  background: #FFFFFF;
   width: 100%;
   display: flex;
-  flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: 20px;
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  gap: 10rem;
+  padding: 5rem 0 5rem 0;
+  text-align: left ;
 }
 
-
-/* Style redirecionamento bem estar */
-.bem-estar{
+.descrita {
   display: flex;
-  align-items: center;
-  border: #4578F9 solid 1px;
-  border-radius: 100px;
-  height: 10px;
-  padding: 1rem;
-  text-decoration: none;
-  transition: scale 0.3s ;
+  flex-direction: column;
+  align-items: start;
+  justify-content: left;
+  gap: 20px;
 }
 
+.dados img{
+  width: 352px;
+  height: 500px;
+}
 /* Texto principal (no card) */
-.diferent-blue{
-  color: #1C5CFF;
+
+.title-dados{
+  text-align: left;
+  max-width: 29vw;
+  font-size: 50px;
+  color: #282828;
 }
 
-.descrição{
-  font-size: 20.8px;
-  text-align: center;
+.title-dados span{
+  margin-bottom: 2rem;
+  font-size: 55px;
+  display: inline-block;
+}
+
+.descricao{
+  font-size: 20px;
   color: #858585;
-  max-width: 50vw;
+  max-width: 33vw;
   margin: 0;
 }
 
@@ -41,26 +52,26 @@
 .buttons{
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
   width: 100%;
-  gap: 5rem;
-  margin-top: 3rem;
+  gap: 3rem;
+  margin-top: 2rem;
   margin-bottom: 35px;
+  max-width: 50vw;  
 }
 
 .a-btn-main{
-  border-radius: 30px;
-  min-width: 15rem;
-  min-height: 1.5rem;
-  font-size: 16px;
+  border-radius: 15px;
+  min-width: 12rem;
+  max-height: 1.5rem;
+  font-size: 22px;
   text-decoration: none;
-  font-size: 20px;
 }
 
 .saiba-mais{
   color: #3E3D3D;
   width: 11rem;
-  font-size: 16px;
+  font-size: 22px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -68,14 +79,11 @@
   transition: scale 0.3s;
 }
 
-/* Style cards dados */
-.cards{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 3rem;
+.saiba-mais:hover {
+  opacity: 0.8;
 }
 
+/* Style cards dados */
 p{
   margin: 0;
 }
@@ -119,6 +127,12 @@ p{
   scale: 0.95;
 }
 
+.descricao-plataforma {
+  max-width: 55vw;
+  text-align: center;
+  font-size: 22px;
+}
+
 /* Grade dos cards horizontais */
 .grid-card{
   margin-top: 6rem;
@@ -140,11 +154,8 @@ p{
 }
 
 .svg{
-  border-radius: 10px;
-  width: 3rem;
-  height: 3rem;
-  padding: 0.5rem;
-  background: #D9E4FF;
+  width: 4rem;
+  height: 4rem;
 }
 
 .card-IA-assistente{
@@ -154,7 +165,6 @@ p{
   display: grid;
   gap: 15px;
   justify-content: left;
-  background: #F2F6FF;
   margin-top: 40px;
 }
 
@@ -162,32 +172,33 @@ p{
   text-align: left;
 }
 
-.IA::after{
-  content: url(../svgs/Robot2.svg);
-  display: inline-block;
-}
-
 /* Style card horizontal azul*/
 .verificado{
   list-style: none;
+  display: flex;
+  align-items: center;
 }
 
 .ul{
   padding: 0;
+  display: grid;
+  gap: 10px;
 }
 .verificado::before{
   content: "";
   display: inline-block;
-  width: 23px;
-  height: 23px;
-  background: url(../svgs/Verificado.svg);
-  background-size: cover;
+  width: 25px;
+  height: 32px;
+  background: url(../assets/Verificado.svg);
+  background-size: contain;
+  background-repeat: no-repeat;
   margin-right: 1rem;
 }
 
 .a-btn-IA{
   width: 16rem;
-  margin-top: 2rem;
+  margin-top: -1rem;
+  font-size: 20px;
 }
 
 /* General style conheças recuros */
@@ -216,7 +227,103 @@ p{
   height: 5rem;
 }
 
-.a-btn-recurso{
+.a-btn-recurso {
   margin: 20px;
   width: 12rem;
+}
+
+
+@media screen and (max-width: 1023px){
+  body{
+    margin: 0;
+  }
+  .dados{
+    margin-bottom: -100px;
+  }
+ .title-dados {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    justify-content: left;
+    position: relative;
+    left: 12%;
+    font-size: 40px;
+    max-width: 80%;
+    margin-block-end: 0;
+ }
+
+ .diferent-blue {
+    font-size: 0;
+    color: transparent;
+ }
+
+ .descricao {
+    position: relative;
+    right: -12%;
+    font-size: 1rem;
+    text-align: left;
+    max-width: 75%;
+    margin-top: 5%;
+ }
+
+ .purple{
+    margin-bottom: -20px;
+ }
+
+ .buttons{
+   width: 100%;
+ }
+
+ .saiba-mais{
+    position: relative;
+    right: 5%;
+    min-width: 8rem;
+ }
+
+ .a-btn-main{
+    position: relative;
+    left: 15%;
+    min-width: 10rem;
+ }
+
+ .cleber-img{
+  display: none;
+ }
+
+ .descricao-plataforma{
+    position: relative;
+    right: 5%;
+ }
+
+ .cards{
+    display: flex;
+    flex-direction: column;
+ }
+
+ .card{
+    min-width: 20rem;
+ }
+
+ .a-btn-main.a-btn-IA{
+    position: relative;
+    left: 6%;
+ }
+
+ .avaliacoes-container{
+    max-width: 20rem;
+    position: relative;
+    left: 8%;
+ }
+
+ #btnAvaliar{
+    width: 8rem;
+    height: 2.5rem;
+    font-size: 1rem;
+ }
+
+ #btnVerTodas{
+    width: 14rem;
+    height: 2.5rem;
+    font-size: 1rem;
+ }
 }

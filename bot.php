@@ -56,6 +56,64 @@ if (!$isLoggedIn) {
     exit;
 }
 ?>
+<?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once __DIR__ . '/db.php';
+
+$isLoggedIn = isset($_SESSION['user_id']);
+
+if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
+    header('Content-Type: application/json');
+    
+    if (!$isLoggedIn) {
+        echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
+        exit;
+    }
+    
+    $user_id = $_SESSION['user_id'];
+    
+    $responseData = [
+        'success' => true,
+        'user_id' => $user_id
+    ];
+    if (isset($pdo)) {
+        try {
+            $stmt = $pdo->prepare("
+                SELECT DISTINCT id_conversa, MAX(timestamp) AS last_message_time
+                FROM chat_history
+                WHERE user_id = :user_id
+                GROUP BY id_conversa
+                ORDER BY last_message_time DESC
+            ");
+            $stmt->execute([':user_id' => $user_id]);
+            $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            $responseData['conversations'] = $conversations;
+        } catch (Exception $e) {
+            error_log('Error fetching conversations: ' . $e->getMessage());
+            $responseData['conversations'] = [];
+        }
+    } else {
+        $responseData['conversations'] = [];
+        $responseData['db_message'] = 'Database connection not available';
+    }
+    
+    echo json_encode($responseData);
+    exit;
+}
+if (!$isLoggedIn) {
+    $_SESSION['redirect_after_login'] = 'bot.php';
+    header('Location: index.php');
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -75,10 +133,17 @@ if (!$isLoggedIn) {
     </script>
 </head>
 <body onload="checkLoginStatus()">
-    <?php include('./components/header.php'); ?>
+    <div class="header-container">
+        <button id="toggle-sidebar" aria-label="Toggle sidebar">
+            <i class="fas fa-bars"></i>
+        </button>
+        <?php include('./components/header.php'); ?>
+
+    </div>
 
     <div class="content">
-        <aside>
+        
+        <aside id="sidebar" class="sidebar">
             <div id="clear-history">
                 <button type="button" id="clear-history-btn" class="text-button">
                     <span>+</span> Nova Conversa
@@ -113,5 +178,95 @@ if (!$isLoggedIn) {
     </div>
 
     <script src="./scripts/bot.js"></script>
+    <script src="./scripts/chatbot.js" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButton = document.getElementById('toggle-sidebar');
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.querySelector('.content main');
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'sidebar-overlay';
+            document.body.appendChild(overlay);
+            
+            // Verifica se está em tela pequena
+            const isMobileView = () => window.innerWidth < 1024;
+            
+            // Adiciona classe 'desktop-view' para controlar quando está em desktop
+            if (!isMobileView()) {
+                sidebar.classList.add('desktop-view');
+            }
+            
+            function toggleSidebar() {
+                // Só alterna a classe 'open' se estiver em modo mobile
+                if (isMobileView()) {
+                    sidebar.classList.toggle('open');
+                    overlay.classList.toggle('active');
+                    
+                    const isOpen = sidebar.classList.contains('open');
+                    toggleButton.setAttribute('aria-expanded', isOpen);
+                    
+                    if (isMobileView()) {
+                        document.body.style.overflow = isOpen ? 'hidden' : '';
+                    }
+                }
+            }
+            
+            toggleButton.addEventListener('click', toggleSidebar);
+            overlay.addEventListener('click', toggleSidebar);
+            
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && sidebar.classList.contains('open') && isMobileView()) {
+                    toggleSidebar();
+                }
+            });
+            
+            toggleButton.setAttribute('aria-expanded', 'false');
+            toggleButton.setAttribute('aria-controls', 'sidebar');
+            
+            // Atualiza a exibição da sidebar quando a janela é redimensionada
+            window.addEventListener('resize', function() {
+                if (isMobileView()) {
+                    sidebar.classList.remove('desktop-view');
+                    // Esconde a sidebar em mobile quando redimensiona
+                    if (sidebar.classList.contains('open')) {
+                        toggleSidebar();
+                    }
+                } else {
+                    sidebar.classList.add('desktop-view');
+                }
+            });
+            
+            // Código para swipe - mantém apenas para mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', function(event) {
+                touchStartX = event.changedTouches[0].screenX;
+            }, false);
+            
+            document.addEventListener('touchend', function(event) {
+                touchEndX = event.changedTouches[0].screenX;
+                handleSwipe();
+            }, false);
+            
+            function handleSwipe() {
+                if (isMobileView()) {
+                    const swipeDistance = touchEndX - touchStartX;
+                    const isSignificantSwipe = Math.abs(swipeDistance) > 50;
+                    
+                    if (isSignificantSwipe) {
+                        if (swipeDistance > 0 && !sidebar.classList.contains('open') && touchStartX < 50) {
+                            toggleSidebar();
+                        }
+                        else if (swipeDistance < 0 && sidebar.classList.contains('open')) {
+                            toggleSidebar();
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>

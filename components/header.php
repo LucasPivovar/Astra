@@ -19,7 +19,8 @@ $isLoggedIn = isset($_SESSION['user_id']);
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Login
     if (isset($_POST['login'])) {
-        $username = sanitizeInput($_POST['username']);
+        // Verificar se a função já existe antes de usá-la
+        $username = function_exists('sanitizeInput') ? sanitizeInput($_POST['username']) : htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8');
         $password = $_POST['password'];
 
         $stmt = $pdo->prepare("SELECT id, username, password FROM users WHERE username = ?");
@@ -38,8 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Registro
     if (isset($_POST['register'])) {
-        $username = sanitizeInput($_POST['username']);
-        $email = sanitizeInput($_POST['email']);
+        // Verificar se a função já existe antes de usá-la
+        $username = function_exists('sanitizeInput') ? sanitizeInput($_POST['username']) : htmlspecialchars(trim($_POST['username']), ENT_QUOTES, 'UTF-8');
+        $email = function_exists('sanitizeInput') ? sanitizeInput($_POST['email']) : htmlspecialchars(trim($_POST['email']), ENT_QUOTES, 'UTF-8');
         $password = $_POST['password'];
         $confirm_password = $_POST['confirm_password'];
 
@@ -78,11 +80,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Função para sanitizar entradas
-function sanitizeInput($input) {
-    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+// Função para sanitizar entradas - Só declara se não existir
+if (!function_exists('sanitizeInput')) {
+    function sanitizeInput($input) {
+        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+    }
 }
 ?>
+
+<!-- codigo HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -92,15 +98,16 @@ function sanitizeInput($input) {
   <link rel="stylesheet" href="./styles/header.css">
 </head>
 <body>
+  <!-- Menu de navegação -->
   <nav>
-    <h1 class="blue title nome-empresa">Astra</h1>
+    <h1 class="purple title nome-empresa">Astra</h1>
     <ul class="btn-menu">
+      <li><a href="index.php" class="lineA">Início</a></li>
       <li><a href="#" class="lineA">Comunidade</a></li>
       <li><a href="bot.php" class="lineA">IA Assistente</a></li>
       <li><a href="#" class="lineA">Metas</a></li>
-      <li><a href="index.php" class="lineA">Início</a></li>
     </ul>
-
+    
     <?php if ($isLoggedIn): ?>
       <div class="user-panel">
         <span id="userProfileBtn"><?= htmlspecialchars($_SESSION['username']) ?></span>
@@ -115,7 +122,7 @@ function sanitizeInput($input) {
           <div class="profile-options">
             <!-- Opção de Perfil -->
             <div class="profile-option-item">
-              <a href="#" id="viewProfileBtn" class="profile-link">
+              <a href="perfil.php" id="viewProfileBtn" class="profile-link">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                   <circle cx="12" cy="7" r="4"></circle>
@@ -207,7 +214,7 @@ function sanitizeInput($input) {
           </form>
           
           <br>
-          <p id="textSignUp">Não tem uma conta? <span id="signUp" class="register blue">Registre-se agora</span></p>
+          <p id="textSignUp">Não tem uma conta? <span id="signUp" class="register purple">Registre-se agora</span></p>
         </div>
       </section>
     <?php endif; ?>

@@ -1,0 +1,112 @@
+
+
+.alert-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    min-width: 300px;
+    max-width: 400px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    pointer-events: none; /* Permite clicar através do container quando não há alertas */
+  }
+  
+  .alert-container.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto; /* Permite clicar nos alertas quando mostrados */
+  }
+  
+  .alert-box {
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    animation: slideIn 0.5s ease forwards;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  
+  @keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        transform: translateX(0);
+    }
+  }
+  
+  .alert-box .alert-content {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+  
+  .alert-box .alert-icon {
+    margin-right: 12px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .alert-box .alert-message {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .alert-box .close-alert {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    padding: 0 0 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .alert-box .close-alert:hover {
+    opacity: 1;
+  }
+  
+  /* Tipos de alertas */
+  .alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border-left: 4px solid #28a745;
+  }
+  
+  .alert-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+  }
+  
+  .alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-left: 4px solid #ffc107;
+  }
+  
+  .alert-info {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border-left: 4px solid #17a2b8;
+  }
+  

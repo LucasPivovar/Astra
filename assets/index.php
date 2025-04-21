@@ -8,28 +8,39 @@
     include('./components/header.php')
   ?>
   <link rel="stylesheet" href="./styles/index.css">
-  <link rel="stylesheet" href="./styles/avaliacoes.css">
 </head>
 <body>
   <main>
 
     <!-- dados -->
-    <section class = "dados">
-      <div class = "descrita">
-        <h1 class="title title-dados"> <span class="purple"> Astra </span> <br> Encontre apoio  na sua jornada de superação</h1>
-        <p class = "descricao">Uma comunidade digital que oferece suporte personalizado, ferramentas de acompanhamento e conexões significativas para ajudar você a superar seus desafios.</p>
-        <div class = "buttons">
-          <a class = "button a-btn-main">Começar agora</a>
-          <a class = "saiba-mais" href = "/"> Saiba mais</a>
+    <section class = "dados"> 
+      <a class = "blue bem-estar" href = "chatbot.php">Uma nova abordagem para o bem estar ➜</a>
+      <h1 class="title"> <span class="diferent-blue"> Astra: </span> Encontre apoio <br> na sua jornada de superação</h1>
+      <p class = "descrição">Uma comunidade digital que oferece suporte personalizado, ferramentas de acompanhamento e conexões significativas para ajudar você a superar seus desafios.</p>
+      <div class = "buttons">
+        <a class = "button a-btn-main">Começar agora</a>
+        <a class = "saiba-mais" href = "/"> Saiba mais ➜</a>
+      </div>
+      <div class = "cards">
+        <div class = "card">
+          <h1 class = "title-card"> 2,500+ </h1>
+          <p> Usuários ativos </p>
+        </div>
+        <div class = "card">
+          <h1 class = "title-card"> 87% </h1>
+          <p> Alcançaram metas </p>
+        </div>
+        <div class = "card">
+          <h1 class = "title-card"> 24/7 </h1>
+          <p> Suporte da IA </p>
         </div>
       </div>
-      <img src="./assets/Cleber.png" alt="Cleber sentado" class="cleber-img">
     </section>
 
     <!-- Projeto -->
     <section class = "projeto">
-      <h1 class = "purple title"> Como a Astra pode ajudar você </h1>
-      <p class = "descricao descricao-plataforma"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </p>
+      <h1 class = "diferent-blue title"> Como a Astra pode ajudar você </h1>
+      <p class = "descrição"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </p>
       <div class = "cards grid-card">
         <div class = "card card-IA cards-horizontais">
           <img src="./assets/Robot.svg" alt="Figura Robô" class = "svg">
@@ -67,12 +78,31 @@
       </div>
     </section>
 
-    <!-- Avaliações -->
-
-    <?php include('./components/avaliacoes.php'); ?>
-
-    <script src="./scripts/avaliacoes.js"></script>
-
+    <!-- Conheça Recursos -->
+    <section class = "conheca-recursos">
+      <h1 class = "diferent-blue title"> Conheça nossos recursos </h1>
+      <p class = "descrição"> Ferramentas desenvolvidas para apoiar você em cada etapa da sua jornada de superação </p>
+      <div class = "cards cards-recursos">
+        <div class = "card card-recurso">
+          <img src="./assets/Circulo.svg" alt="" class = "svg">
+          <h1 class = "title-card "> Acompanhamento de Metas </h1>
+          <p> Defina objetivos, acompanhe seu progresso e celebre suas conquistas </p>
+          <a href="/" class = "button a-btn-recurso"> Acessar metas ➜ </a>
+        </div>
+        <div class = "card card-recurso">
+          <img src="./assets/Robot.svg" alt="" class = "svg">
+          <h1 class = "title-card"> Assistente Virtual </h1>
+          <p> Receba apoio e orientação personalizada 24 horas por dia </p>
+          <a href="chatbot.php" class = "button a-btn-recurso "> Falar com assistente ➜ </a>
+        </div>
+        <div class = "card card-recurso">
+          <img src="./assets/Circulo.svg" alt="" class = "svg">
+          <h1 class = "title-card"> Comunidade </h1>
+          <p> Conecte-se com outros membros, compartilhe experiências e histórias </p>
+          <a href="/" class = "button a-btn-recurso"> Ver Comiunidade ➜ </a>
+        </div>
+      </div>
+    </section>
   </main>
 </body>
 </html>
