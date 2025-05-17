@@ -4,33 +4,36 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Incio</title>
-  <?php
-    include('./components/header.php')
-  ?>
-  <link rel="stylesheet" href="./styles/index.css">
   <link rel="stylesheet" href="./styles/avaliacoes.css">
+  <link rel="shortcut icon" type="imagex/png" href="./assets/logo.svg">
+
 </head>
 <body>
   <main>
-
+    <!-- Não alterar a ordem, sujeito a conflito de estilos. -->
+    <?php
+      include('./components/header.php')
+    ?>
+    <link rel="stylesheet" href="./styles/index.css">
+    
     <!-- dados -->
     <section class = "dados">
       <div class = "descrita">
         <h1 class="title title-dados"> <span class="purple"> Astra </span> <br> Encontre apoio  na sua jornada de superação</h1>
         <p class = "descricao">Uma comunidade digital que oferece suporte personalizado, ferramentas de acompanhamento e conexões significativas para ajudar você a superar seus desafios.</p>
         <div class = "buttons">
-          <a class = "button a-btn-main">Começar agora</a>
+          <button id = "cmaButton" class = "button a-btn-main">Começar agora</button>
           <a class = "saiba-mais" href = "/"> Saiba mais</a>
         </div>
       </div>
-      <img src="./assets/Cleber.png" alt="Cleber sentado" class="cleber-img">
+      <img src="./assets/ilstr.svg" alt="Ilustração" class="ilstr">
     </section>
 
     <!-- Projeto -->
     <section class = "projeto">
-      <h1 class = "purple title"> Como a Astra pode ajudar você </h1>
+      <h1 class = "purple title title-projeto"> Como a Astra pode ajudar você </h1>
       <p class = "descricao descricao-plataforma"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </p>
-      <div class = "cards grid-card">
+      <div class = "grid-card">
         <div class = "card card-IA cards-horizontais">
           <img src="./assets/Robot.svg" alt="Figura Robô" class = "svg">
             <h1 class = "title-card"> Assistente Virtual Inteligente
@@ -53,17 +56,17 @@
             <h1 class = "title-card"> Reconhecimento e Recompensas </h1>
             <p> Conecte-se com pessoas que enfrentam desafios semelhantes, compartilhe experiências e encontre inspiração em histórias de superação. </p>
         </div>
-      </div>
-      <div class = "card card-horizontais card-IA-assistente" id="redirecionament-IA">
-        <h1 class = "title title-card">Assistente de IA Personalizados</h1>
-        <p> Nosso assistente virtual inteligente está disponível 24 horas por dia para oferecer orientação, exercícios de respiração, técnicas de mindfulness e estratégias personalizadas para ajudar você a superar momentos difíceis. </p>
-        <ul class = "ul">
-          <li class = "verificado"> Suporte imediato em momentos de crise</li>
-          <li class = "verificado"> Técnicas personalizadas baseadas no seu progresso</li>
-          <li class = "verificado"> Recursos educativos sobre dependência</li>
-          <li class = "verificado"> Lembretes motivacionais diários</li>
-        </ul>
-        <a class = "button a-btn-IA a-btn-main" href ="chatbot.php"> Experimente o assistente </a>
+        <div class = "card cards-horizontais card-IA-assistente" id="redirecionament-IA">
+          <h1 class = "title title-card">Assistente de IA Personalizados</h1>
+          <p> Nosso assistente virtual inteligente está disponível 24 horas por dia para oferecer orientação, exercícios de respiração, técnicas de mindfulness e estratégias personalizadas para ajudar você a superar momentos difíceis. </p>
+          <ul class = "ul">
+            <li class = "verificado"> <img src="./assets/Verificado.svg" alt=""> Suporte imediato em momentos de crise</li>
+            <li class = "verificado"> <img src="./assets/Verificado.svg" alt="">Técnicas personalizadas baseadas no seu progresso</li>
+            <li class = "verificado"> <img src="./assets/Verificado.svg" alt="">Recursos educativos sobre dependência</li>
+            <li class = "verificado"> <img src="./assets/Verificado.svg" alt="">Lembretes motivacionais diários</li>
+          </ul>
+          <a class = "button a-btn-IA a-btn-main" href ="bot.php"> Experimente o assistente </a>
+        </div>
       </div>
     </section>
 
@@ -72,6 +75,7 @@
     <?php include('./components/avaliacoes.php'); ?>
 
     <script src="./scripts/avaliacoes.js"></script>
+    <script src="./scripts/index.js"></script>
 
   </main>
 </body>

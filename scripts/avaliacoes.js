@@ -11,23 +11,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeTodasAvaliacoes = modalTodasAvaliacoes.querySelector('.close-todas');
 
     btnAvaliar.addEventListener('click', function() {
-        modalAvaliacao.style.display = 'block';
+        modalAvaliacao.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-    });
-
-    closeAvaliacao.addEventListener('click', function() {
-        modalAvaliacao.style.display = 'none';
-        document.body.style.overflow = 'auto'; 
     });
 
     btnVerTodas.addEventListener('click', function() {
-        modalTodasAvaliacoes.style.display = 'block';
+        modalTodasAvaliacoes.style.display = 'flex';
         document.body.style.overflow = 'hidden';
-    });
-
-    closeTodasAvaliacoes.addEventListener('click', function() {
-        modalTodasAvaliacoes.style.display = 'none';
-        document.body.style.overflow = 'auto'; 
     });
 
     window.addEventListener('click', function(event) {

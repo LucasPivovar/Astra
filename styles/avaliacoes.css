@@ -1,272 +1,287 @@
-/* styles/avaliacoes.css */
-
+/* Estilos globais avaliações main*/
 .avaliacoes {
-    background: #f8f9fa;
-    padding: 5rem 0;
-    text-align: center;
-    width: 100%;
+  padding: 5rem 0 3rem 0;
+  text-align: center;
+  width: 100vw;
+  justify-self: center;
+}
+
+.avaliacoes-container {
+  margin-bottom: 5rem;
+}
+
+.avaliacao-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.avaliacao-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.avatar-pequeno {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #fff;
+  object-fit: cover;
+}
+
+.nome-avaliacao {
+  color: #595BD4;
+  font-weight: bold;
+  max-width: 150px;
+}
+
+.estrelas-pequenas {
+  display: flex;
+}
+
+.estrela-pequena {
+  color: #ccc;
+}
+
+.estrela-pequena.active {
+  color: #595BD4;
+}
+
+.comentario-avaliacao {
+  display: flex;
+  align-items: center;
+  color: #868686;
+  font-weight: bold;
+  line-height: 1.5;
+  word-break: break-word;
+  max-width: 80%;
+  overflow-y: auto;
+  margin: 0;
+}
+
+.sem-avaliacoes {
+  text-align: center;
+  color: #888;
+  padding: 2rem 0;
+}
+
+.button-outline {
+  font-weight: bold;
+  color: #3E3D3D;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.button-outline:hover {
+  color: #3e3d3da6;
+}
+
+.button-avaliar {
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal Avaliação usuário */
+.modal-content form {
+  gap: 10px;
+}
+
+.rating-container {
+  display: flex;
+  justify-content: center;
+}
+
+.estrelas-selecao {
+  display: flex;
+  flex-direction: row;
+}
+
+.estrela-selecao {
+  color: #ccc;
+  font-size: 30px;
+  margin: 0 5px;
+  cursor: pointer;
+  transition: color 0.2s, transform 0.2s;
+}
+
+.estrela-selecao.active {
+  color: #595BD4;
+}
+
+.estrela-selecao:hover {
+  transform: scale(1.02);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.form-group textarea {
+  resize: none;
+  background: transparent;
+  width: 100%;
+  padding: 12px;
+  font-size: 1.3rem;
+  border: 1px solid #636366;
+  border-radius: 8px;
+  overflow-y: auto;
+}
+
+.form-group textarea:focus {
+  outline: none;
+}
+
+.modal-content button{
+  width: 10rem;
+}
+
+.login-alert {
+  color: #e74c3c;
+  text-align: center;
+}
+
+/* Modal todas as Avaliações */
+.modal-todas {
+  max-height: 80vh;
+  overflow-y: auto;
+  justify-content: start;
+  gap: 2rem;
+}
+
+.todas-avaliacoes-container {
+  display: grid;
+  gap: 1rem;
+}
+
+.modal-todas .avaliacao-item {
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+  border-radius: 20px;
+  padding: 1rem;
+}
+
+/* Animaçoes */
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
   }
-  
-  .avaliacoes .title {
-    margin-bottom: 3rem;
+
+  to {
+    opacity: 1;
+    transform: translateY(0px);
   }
-  
+}
+
+/* scrollbar */
+.scrollbar::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar::-webkit-scrollbar-thumb {
+  background: #8888887c;
+  border-radius: 20px;
+}
+
+/* Responsividade Desktop */
+@media screen and (min-width:1024px) {
+  /* avaliacoes main */
+  .avaliacoes h1 {
+    margin-bottom: 5rem;
+  }
+
   .avaliacoes-container {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin-bottom: 3rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 5rem;
   }
-  
-  .avaliacao-card {
-    background: #FFFFFF;
-    border-radius: 20px;
-    padding: 2rem;
-    width: 280px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    transition: transform 0.3s;
-  }
-  
-  .avaliacao-card:hover {
-    transform: translateY(-5px);
-  }
-  
-  .avaliacao-card .avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 1rem;
-  }
-  
-  .estrelas {
-    margin-bottom: 1rem;
-    display: flex;
-  }
-  
-  .estrela {
-    color: #ccc;
-    font-size: 24px;
-    margin: 0 2px;
-  }
-  
-  .estrela.active {
-    color: #FFD700;
-  }
-  
-  .comentario {
-    color: #666;
-    font-size: 16px;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    height: 80px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-  }
-  
-  .nome {
-    font-weight: bold;
-    color: #333;
-    margin: 0;
-  }
-  
+
   .avaliacoes-botoes {
     display: flex;
     justify-content: center;
-    gap: 1rem;
+    gap: 3rem;
+    scale: 1.2;
   }
-  
-  /* Modal de Avaliação */
-  .modal {
-    display: none;
-    position: fixed;
-    z-index: 100;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-  }
-  
-  .modal-content {
-    background-color: white;
-    margin: 10% auto;
-    padding: 2rem;
-    border-radius: 15px;
-    width: 90%;
-    max-width: 500px;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    animation: modalIn 0.3s ease-out;
-  }
-  
-  .modal-todas {
-    max-width: 800px;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  
-  @keyframes modalIn {
-    from {
-      opacity: 0;
-      transform: translateY(-50px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  .close {
-    position: absolute;
-    top: 15px;
-    right: 20px;
-    font-size: 28px;
-    font-weight: bold;
-    color: #aaa;
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-  
-  .close:hover {
-    color: #333;
-  }
-  
-  /* Estrelas para seleção */
-  .rating-container {
-    margin: 2rem 0;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .estrelas-selecao {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .estrela-selecao {
-    color: #ccc;
-    font-size: 40px;
-    cursor: pointer;
-    margin: 0 5px;
-    transition: color 0.2s, transform 0.2s;
-  }
-  
-  .estrela-selecao:hover,
-  .estrela-selecao.active {
-    color: #FFD700;
-    transform: scale(1.1);
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    color: #555;
-  }
-  
-  .form-group textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    resize: vertical;
-    font-family: inherit;
-    font-size: 16px;
-  }
-  
-  .login-alert {
-    color: #e74c3c;
-    margin-bottom: 1rem;
-  }
-  
-  /* Estilos para "Todas as avaliações" */
-  .todas-avaliacoes-container {
-    max-height: 50vh;
-    overflow-y: auto;
-    padding-right: 10px;
-  }
-  
+
   .avaliacao-item {
-    border-bottom: 1px solid #eaeaea;
-    padding: 1.5rem 0;
+    min-width: 94%;
+    margin: auto;
   }
-  
-  .avaliacao-item:last-child {
-    border-bottom: none;
-  }
-  
-  .avaliacao-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-  
-  .avatar-pequeno {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-  }
-  
+
   .nome-avaliacao {
-    font-weight: bold;
-    margin-right: auto;
+    font-size: 20px;
   }
-  
-  .estrelas-pequenas {
-    display: flex;
-    margin-right: 15px;
-  }
-  
+
   .estrela-pequena {
-    color: #ccc;
-    font-size: 14px;
+    font-size: 35px;
   }
-  
-  .estrela-pequena.active {
-    color: #FFD700;
-  }
-  
-  .data-avaliacao {
-    color: #999;
-    font-size: 14px;
-  }
-  
+
   .comentario-avaliacao {
-    color: #666;
-    line-height: 1.5;
-    margin: 0;
+    height: 80px;
   }
-  
-  .sem-avaliacoes {
-    text-align: center;
-    color: #888;
-    padding: 2rem 0;
-  }
-  
-  /* Botão Outline */
+
   .button-outline {
-    background: transparent;
-    border: 2px solid #1C5CFF;
-    color: #1C5CFF;
-    padding: 10px 20px;
     font-size: 16px;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: all 0.3s;
   }
-  
-  .button-outline:hover {
-    background: #e6efff;
+
+  /* Todas avaliacoes */
+  .modal-todas {
+    max-width: 75%;
   }
+}
+
+/* Responsividade Mobile */
+@media screen and (max-width:1023px) {
+  /* avaliações main */
+  .avaliacoes h1 {
+    margin-bottom: 3rem;
+  }
+
+  .avaliacoes-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+  }
+
+  .avaliacao-item {
+    width: 84%;
+    margin: auto;
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+    border-radius: 20px;
+    padding: 1rem;
+  }
+
+  .avaliacoes-botoes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    scale: 1.2;
+  }
+
+  .button-avaliar {
+    width: 12rem;
+  }
+
+  /* avaliçãos usuário */
+  .modal-content {
+    width: 70%;
+  }
+  /* todas avalições */
+
+}

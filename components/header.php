@@ -15,6 +15,25 @@ $error = '';
 $successMessage = '';
 $isLoggedIn = isset($_SESSION['user_id']);
 
+// Função para obter a imagem de perfil do usuário
+function getUserProfileImage($pdo, $userId) {
+    try {
+        $stmt = $pdo->prepare("SELECT profile_image FROM user_profiles WHERE user_id = ?");
+        $stmt->execute([$userId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($result && !empty($result['profile_image']) && file_exists($result['profile_image'])) {
+            return $result['profile_image'];
+        }
+        return "./assets/default-profile.png";
+    } catch (PDOException $e) {
+        return "./assets/default-profile.png";
+    }
+}
+
+// Obter a imagem de perfil se o usuário estiver logado
+$userProfileImage = $isLoggedIn ? getUserProfileImage($pdo, $_SESSION['user_id']) : "./assets/default-profile.png";
+
 // Processa as solicitações POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Login
@@ -75,20 +94,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Logout
     if (isset($_POST['logout'])) {
         session_destroy();
-        header('Location: index.php'); // Redireciona para a página inicial
+        header('Location: index.php'); 
         exit;
     }
-}
-
-// Função para sanitizar entradas - Só declara se não existir
-if (!function_exists('sanitizeInput')) {
-    function sanitizeInput($input) {
-        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
-    }
-}
+  }
 ?>
-
-<!-- codigo HTML -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,28 +106,37 @@ if (!function_exists('sanitizeInput')) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Astra</title>
   <link rel="stylesheet" href="./styles/header.css">
+  <link rel="shortcut icon" type="imagex/png" href="./assets/logo.svg">
 </head>
 <body>
   <!-- Menu de navegação -->
   <nav>
-    <h1 class="purple title nome-empresa">Astra</h1>
+    <img src="./assets/logo.svg" alt="" class="logo-empresa">
     <ul class="btn-menu">
       <li><a href="index.php" class="lineA">Início</a></li>
-      <li><a href="#" class="lineA">Comunidade</a></li>
-      <li><a href="bot.php" class="lineA">IA Assistente</a></li>
-      <li><a href="#" class="lineA">Metas</a></li>
+      <li><a href="community.php" class="lineA">Comunidade</a></li>
+      <li><a href="bot.php" class="lineA">Assistente Virtual</a></li>
+      <li><a href="metas.php" class="lineA">Metas</a></li>
     </ul>
+    
+    <!-- O botão hambúrguer só aparece para usuários logados -->
+    <?php if ($isLoggedIn): ?>
+      <button id="btn-hamburguer" class="hamburguer"><img src="../assets/Hamburguer.svg" alt="Menu"></button>
+    <?php endif; ?>
     
     <?php if ($isLoggedIn): ?>
       <div class="user-panel">
-        <span id="userProfileBtn"><?= htmlspecialchars($_SESSION['username']) ?></span>
+        <img id="userProfileBtn" src="<?= $userProfileImage ?>" alt="Foto de Perfil" class="profile-img">
       </div>
       
       <!-- Modal do perfil do usuário -->
       <section id="userProfileModal" class="modalContainer">
         <div class="backgroundModal profileModal">
           <h2>Perfil do Usuário</h2>
-          <p id="userProfileOpen">Bem-vindo(a), <?= htmlspecialchars($_SESSION['username']) ?>!</p>
+          <!-- Adicionando a imagem de perfil no modal -->
+          <div style="display: flex; align-items: center; margin-bottom: 15px;">
+            <p id="userProfileOpen">Bem-vindo(a), <?= htmlspecialchars($_SESSION['username']) ?>!</p>
+          </div>
           
           <div class="profile-options">
             <!-- Opção de Perfil -->
@@ -128,17 +147,6 @@ if (!function_exists('sanitizeInput')) {
                   <circle cx="12" cy="7" r="4"></circle>
                 </svg>
                 <span>Meu Perfil</span>
-              </a>
-            </div>
-            
-            <!-- Opção de Configurações -->
-            <div class="profile-option-item">
-              <a href="#" id="settingsBtn" class="profile-link">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="3"></circle>
-                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                </svg>
-                <span>Configurações</span>
               </a>
             </div>
             
@@ -178,35 +186,35 @@ if (!function_exists('sanitizeInput')) {
           <?php endif; ?>
           
           <form id="formLogin" method="POST" action="">
-            <div>
+            <div class= "container-input">
               <span class="label userLoginLabel">Nome de usuário</span>
               <input type="text" name="username" required>
             </div>
             <br>
-            <div>
-              <span class="label">Senha</span>
+            <div class= "container-input">
+              <span class="label userPasswordLabel">Senha</span>
               <input type="password" name="password" required>
             </div>
             <button type="submit" name="login" class="button formButton">Entrar</button>
           </form>
           
           <form id="formSignUp" method="POST" action="">
-            <div>
+            <div class= "container-input">
               <span class="label userLabel">Usuário</span>
               <input type="text" name="username" required>
             </div>
             <br>
-            <div>
+            <div class= "container-input">
               <span class="label">Email</span>
               <input type="email" name="email" required>
             </div>
             <br>
-            <div>
+            <div class= "container-input">
               <span class="label">Senha</span>
               <input type="password" name="password" required>
             </div>
             <br>
-            <div>
+            <div class= "container-input">
               <span class="label">Confirmar</span>
               <input type="password" name="confirm_password" required>
             </div>
@@ -219,6 +227,72 @@ if (!function_exists('sanitizeInput')) {
       </section>
     <?php endif; ?>
   </nav>
+  
+  <!-- Menu Mobile - Só exibido se o usuário estiver logado -->
+  <?php if ($isLoggedIn): ?>
+  <div id="mobile-menu">
+    <div class="mobile-menu-content">
+      <ul class="mobile-menu-items">
+        <li class="mobile-menu-item">
+          <img src="<?= $userProfileImage ?>" alt="Foto de Perfil" class="mobile-profile-img">
+        </li>
+        <li class="mobile-menu-item">
+          <a href="index.php" class="mobile-menu-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mobile-menu-icon">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Início
+          </a>
+        </li>
+        <li class="mobile-menu-item">
+          <a href="community.php" class="mobile-menu-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mobile-menu-icon">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Comunidade
+          </a>
+        </li>
+        <li class="mobile-menu-item">
+          <a href="bot.php" class="mobile-menu-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mobile-menu-icon">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            IA Assistente
+          </a>
+        </li>
+        <li class="mobile-menu-item">
+          <a href="#" class="mobile-menu-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mobile-menu-icon">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+            Metas
+          </a>
+        </li>
+        <li class="mobile-menu-item">
+          <a href="perfil.php" class="mobile-menu-link">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mobile-menu-icon">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Perfil
+          </a>
+        </li>
+        <li>
+          <form method="POST" action="index.php">
+            <input type="hidden" name="logout" value="1">
+            <button type="submit" class="mobile-logout-btn">Sair</button>
+          </form>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <?php endif; ?>
+  
   <script src="./scripts/header.js"></script>
 </body>
 </html>

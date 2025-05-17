@@ -5,7 +5,11 @@ if (!isset($_SESSION)) {
 
 require_once __DIR__ . '/../db.php';
 
-// Função para salvar avaliação
+// Define sanitizeInput function at the beginning of the file to fix the error
+function sanitizeInput($input) {
+    return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_avaliacao'])) {
     if (!isset($_SESSION['user_id'])) {
         header("Location: index.php?login_required=true");
@@ -16,11 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_avaliacao'])) 
     $username = $_SESSION['username'];
     $rating = (int) $_POST['rating'];
     $comment = sanitizeInput($_POST['comment']);
-    
-    // Obter ou gerar o avatar_id do usuário
-    $avatar_id = isset($_SESSION['avatar_id']) ? $_SESSION['avatar_id'] : rand(1, 3);
 
-    // Validação básica
     if ($rating < 1 || $rating > 5) {
         $error = "Por favor, selecione entre 1 e 5 estrelas.";
     } elseif (empty($comment)) {
@@ -31,17 +31,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_avaliacao'])) 
             $checkStmt->execute([$userId]);
             
             if ($checkStmt->rowCount() > 0) {
-                $stmt = $pdo->prepare("UPDATE avaliacoes SET rating = ?, comment = ?, avatar_id = ?, updated_at = NOW() WHERE user_id = ?");
-                $stmt->execute([$rating, $comment, $avatar_id, $userId]);
+                $stmt = $pdo->prepare("UPDATE avaliacoes SET rating = ?, comment = ?, updated_at = NOW() WHERE user_id = ?");
+                $stmt->execute([$rating, $comment, $userId]);
                 $successMessage = "Sua avaliação foi atualizada com sucesso!";
             } else {
-                $stmt = $pdo->prepare("INSERT INTO avaliacoes (user_id, username, rating, comment, avatar_id, created_at) VALUES (?, ?, ?, ?, ?, NOW())");
-                $stmt->execute([$userId, $username, $rating, $comment, $avatar_id]);
+                $stmt = $pdo->prepare("INSERT INTO avaliacoes (user_id, username, rating, comment, created_at) VALUES (?, ?, ?, ?, NOW())");
+                $stmt->execute([$userId, $username, $rating, $comment]);
                 $successMessage = "Sua avaliação foi enviada com sucesso!";
-                
-                if (!isset($_SESSION['avatar_id'])) {
-                    $_SESSION['avatar_id'] = $avatar_id;
-                }
             }
         } catch (PDOException $e) {
             $error = "Erro ao salvar avaliação: " . $e->getMessage();
@@ -49,11 +45,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit_avaliacao'])) 
     }
 }
 
-// Função para obter avaliações (limitado a 3 para exibição na página inicial)
 function getAvaliacoes($pdo, $limit = 3) {
     try {
         $limit = intval($limit);
-        $stmt = $pdo->query("SELECT username, rating, comment, created_at, avatar_id FROM avaliacoes ORDER BY created_at DESC LIMIT $limit");
+        $stmt = $pdo->query("
+            SELECT a.username, a.rating, a.comment, a.created_at, u.profile_image 
+            FROM avaliacoes a
+            LEFT JOIN user_profiles u ON a.user_id = u.user_id
+            ORDER BY a.created_at DESC 
+            LIMIT $limit
+        ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         error_log("Erro ao buscar avaliações: " . $e->getMessage());
@@ -61,10 +62,14 @@ function getAvaliacoes($pdo, $limit = 3) {
     }
 }
 
-// Função para obter todas as avaliações (para o modal "Ver todas")
 function getAllAvaliacoes($pdo) {
     try {
-        $stmt = $pdo->query("SELECT username, rating, comment, created_at, avatar_id FROM avaliacoes ORDER BY created_at DESC");
+        $stmt = $pdo->query("
+            SELECT a.username, a.rating, a.comment, a.created_at, u.profile_image
+            FROM avaliacoes a
+            LEFT JOIN user_profiles u ON a.user_id = u.user_id
+            ORDER BY a.created_at DESC
+        ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
         error_log("Erro ao buscar todas as avaliações: " . $e->getMessage());
@@ -72,12 +77,16 @@ function getAllAvaliacoes($pdo) {
     }
 }
 
-// Obter avaliação do usuário atual, se existir
 function getUserAvaliacao($pdo, $userId) {
     if (!$userId) return null;
     
     try {
-        $stmt = $pdo->prepare("SELECT rating, comment, avatar_id FROM avaliacoes WHERE user_id = ?");
+        $stmt = $pdo->prepare("
+            SELECT a.rating, a.comment, u.profile_image
+            FROM avaliacoes a
+            LEFT JOIN user_profiles u ON a.user_id = u.user_id
+            WHERE a.user_id = ?
+        ");
         $stmt->execute([$userId]);
         return $stmt->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
@@ -90,16 +99,14 @@ $avaliacoes = getAvaliacoes($pdo, 3);
 
 $userAvaliacao = isset($_SESSION['user_id']) ? getUserAvaliacao($pdo, $_SESSION['user_id']) : null;
 
-if ($userAvaliacao && isset($userAvaliacao['avatar_id'])) {
-    $_SESSION['avatar_id'] = $userAvaliacao['avatar_id'];
-} elseif (!isset($_SESSION['avatar_id'])) {
-    $_SESSION['avatar_id'] = rand(1, 3);
-}
+// Remove the duplicate function definition that was causing the error
+// The function is now defined at the top of the file
 
-if (!function_exists('sanitizeInput')) {
-    function sanitizeInput($input) {
-        return htmlspecialchars(trim($input), ENT_QUOTES, 'UTF-8');
+function getProfileImage($profileImage) {
+    if (!empty($profileImage) && file_exists($profileImage)) {
+        return $profileImage;
     }
+    return "./assets/default-profile.png";
 }
 ?>
 
@@ -113,30 +120,28 @@ if (!function_exists('sanitizeInput')) {
             <?php foreach ($avaliacoes as $avaliacao): ?>
                 <div class="avaliacao-item">
                     <div class="avaliacao-header">
-                        <img src="./assets/avatar-<?= isset($avaliacao['avatar_id']) ? $avaliacao['avatar_id'] : rand(1, 3) ?>.png" alt="Avatar do usuário" class="avatar-pequeno">
-                        <span class="nome-avaliacao"><?= sanitizeInput($avaliacao['username']) ?></span>
+                        <img src="<?= getProfileImage($avaliacao['profile_image']) ?>" alt="Avatar do usuário" class="avatar-pequeno">
                         <div class="estrelas-pequenas">
                             <?php for ($i = 1; $i <= 5; $i++): ?>
                                 <span class="estrela-pequena <?= ($i <= $avaliacao['rating']) ? 'active' : '' ?>">★</span>
                             <?php endfor; ?>
                         </div>
-                        <span class="data-avaliacao"><?= date('d/m/Y', strtotime($avaliacao['created_at'])) ?></span>
                     </div>
-                    <p class="comentario-avaliacao"><?= sanitizeInput($avaliacao['comment']) ?></p>
+                    <p class="comentario-avaliacao scrollbar"><?= sanitizeInput($avaliacao['comment']) ?></p>
+                    <p><span class="nome-avaliacao"><?= sanitizeInput($avaliacao['username']) ?></span></p>
                 </div>
             <?php endforeach; ?>
         <?php endif; ?>
     </div>
     
     <div class="avaliacoes-botoes">
-        <button id="btnAvaliar" class="button">Avalie-nos</button>
+        <button id="btnAvaliar" class="button button-avaliar">Avalie-nos</button>
         <button id="btnVerTodas" class="button-outline">Ver Todas as avaliações</button>
     </div>
     
     <!-- Modal para adicionar avaliação -->
-    <div id="modalAvaliacao" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
+    <div id="modalAvaliacao" class="modal modalContainer">
+        <div class="modal-content backgroundModal">
             <h2>Sua avaliação</h2>
             
             <?php if (!empty($error)): ?>
@@ -159,12 +164,11 @@ if (!function_exists('sanitizeInput')) {
                 </div>
                 
                 <div class="form-group">
-                    <label for="comment">Seu comentário:</label>
-                    <textarea name="comment" id="comment" rows="4" required><?= $userAvaliacao ? $userAvaliacao['comment'] : '' ?></textarea>
+                    <textarea name="comment" id="comment" class="scrollbar" rows="4" placeholder="Digite aqui sua avaliação" required><?= $userAvaliacao ? $userAvaliacao['comment'] : '' ?></textarea>
                 </div>
                 
                 <?php if (!isset($_SESSION['user_id'])): ?>
-                    <p class="login-alert">Faça login para enviar sua avaliação</p>
+                    <p class="login-alert">* Faça login para enviar sua avaliação</p>
                 <?php else: ?>
                     <button type="submit" name="submit_avaliacao" class="button">
                         <?= $userAvaliacao ? 'Atualizar avaliação' : 'Enviar avaliação' ?>
@@ -175,9 +179,8 @@ if (!function_exists('sanitizeInput')) {
     </div>
     
     <!-- Modal para visualizar todas as avaliações -->
-    <div id="modalTodasAvaliacoes" class="modal">
-        <div class="modal-content modal-todas">
-            <span class="close close-todas">&times;</span>
+    <div id="modalTodasAvaliacoes" class="modal modalContainer">
+        <div class="modal-content modal-todas backgroundModal scrollbar">
             <h2>Todas as avaliações</h2>
             
             <div class="todas-avaliacoes-container">
@@ -190,14 +193,13 @@ if (!function_exists('sanitizeInput')) {
                     <?php foreach ($todasAvaliacoes as $avaliacao): ?>
                         <div class="avaliacao-item">
                             <div class="avaliacao-header">
-                                <img src="./assets/avatar-<?= isset($avaliacao['avatar_id']) ? $avaliacao['avatar_id'] : rand(1, 3) ?>.png" alt="Avatar do usuário" class="avatar-pequeno">
+                                <img src="<?= getProfileImage($avaliacao['profile_image']) ?>" alt="Avatar do usuário" class="avatar-pequeno">
                                 <span class="nome-avaliacao"><?= sanitizeInput($avaliacao['username']) ?></span>
                                 <div class="estrelas-pequenas">
                                     <?php for ($i = 1; $i <= 5; $i++): ?>
                                         <span class="estrela-pequena <?= ($i <= $avaliacao['rating']) ? 'active' : '' ?>">★</span>
                                     <?php endfor; ?>
                                 </div>
-                                <span class="data-avaliacao"><?= date('d/m/Y', strtotime($avaliacao['created_at'])) ?></span>
                             </div>
                             <p class="comentario-avaliacao"><?= sanitizeInput($avaliacao['comment']) ?></p>
                         </div>

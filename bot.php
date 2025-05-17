@@ -56,72 +56,16 @@ if (!$isLoggedIn) {
     exit;
 }
 ?>
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-
-require_once __DIR__ . '/db.php';
-
-$isLoggedIn = isset($_SESSION['user_id']);
-
-if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-    header('Content-Type: application/json');
-    
-    if (!$isLoggedIn) {
-        echo json_encode(['success' => false, 'message' => 'Usuário não autenticado.']);
-        exit;
-    }
-    
-    $user_id = $_SESSION['user_id'];
-    
-    $responseData = [
-        'success' => true,
-        'user_id' => $user_id
-    ];
-    if (isset($pdo)) {
-        try {
-            $stmt = $pdo->prepare("
-                SELECT DISTINCT id_conversa, MAX(timestamp) AS last_message_time
-                FROM chat_history
-                WHERE user_id = :user_id
-                GROUP BY id_conversa
-                ORDER BY last_message_time DESC
-            ");
-            $stmt->execute([':user_id' => $user_id]);
-            $conversations = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            
-            $responseData['conversations'] = $conversations;
-        } catch (Exception $e) {
-            error_log('Error fetching conversations: ' . $e->getMessage());
-            $responseData['conversations'] = [];
-        }
-    } else {
-        $responseData['conversations'] = [];
-        $responseData['db_message'] = 'Database connection not available';
-    }
-    
-    echo json_encode($responseData);
-    exit;
-}
-if (!$isLoggedIn) {
-    $_SESSION['redirect_after_login'] = 'bot.php';
-    header('Location: index.php');
-    exit;
-}
-?>
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstraAI ChatBot</title>
+    <title>Assistente Virtual</title>
     <link rel="stylesheet" href="./styles/bot.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="shortcut icon" type="imagex/png" href="./assets/logo.svg">
+
     <script>
     function checkLoginStatus() {
         console.log('Session check: User ' + (<?= json_encode($isLoggedIn) ?> ? 'is logged in' : 'is NOT logged in'));
@@ -135,10 +79,12 @@ if (!$isLoggedIn) {
 <body onload="checkLoginStatus()">
     <div class="header-container">
         <button id="toggle-sidebar" aria-label="Toggle sidebar">
-            <i class="fas fa-bars"></i>
+            <img src="./assets/sidebar.svg" alt="Toggle sidebar">
         </button>
+        <div class="header-title">
+            <h1>AstraAI</h1>
+        </div>
         <?php include('./components/header.php'); ?>
-
     </div>
 
     <div class="content">
@@ -184,22 +130,17 @@ if (!$isLoggedIn) {
         document.addEventListener('DOMContentLoaded', function() {
             const toggleButton = document.getElementById('toggle-sidebar');
             const sidebar = document.getElementById('sidebar');
-            const mainContent = document.querySelector('.content main');
-            
             const overlay = document.createElement('div');
             overlay.className = 'sidebar-overlay';
             document.body.appendChild(overlay);
             
-            // Verifica se está em tela pequena
             const isMobileView = () => window.innerWidth < 1024;
             
-            // Adiciona classe 'desktop-view' para controlar quando está em desktop
             if (!isMobileView()) {
                 sidebar.classList.add('desktop-view');
             }
             
             function toggleSidebar() {
-                // Só alterna a classe 'open' se estiver em modo mobile
                 if (isMobileView()) {
                     sidebar.classList.toggle('open');
                     overlay.classList.toggle('active');
@@ -224,21 +165,24 @@ if (!$isLoggedIn) {
             
             toggleButton.setAttribute('aria-expanded', 'false');
             toggleButton.setAttribute('aria-controls', 'sidebar');
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('.conversation-item') || e.target.closest('#clear-history-btn')) {
+                    if (isMobileView() && sidebar.classList.contains('open')) {
+                        setTimeout(toggleSidebar, 100);
+                    }
+                }
+            }, true);
             
-            // Atualiza a exibição da sidebar quando a janela é redimensionada
             window.addEventListener('resize', function() {
                 if (isMobileView()) {
                     sidebar.classList.remove('desktop-view');
-                    // Esconde a sidebar em mobile quando redimensiona
-                    if (sidebar.classList.contains('open')) {
-                        toggleSidebar();
-                    }
                 } else {
                     sidebar.classList.add('desktop-view');
+                    sidebar.classList.remove('open');
+                    overlay.classList.remove('active');
                 }
             });
             
-            // Código para swipe - mantém apenas para mobile
             let touchStartX = 0;
             let touchEndX = 0;
             
@@ -267,6 +211,9 @@ if (!$isLoggedIn) {
                 }
             }
         });
+        // Pintar o elemento do nav em que o usuário está presente 
+        const colorMenu = document.querySelectorAll('.btn-menu li a')
+        colorMenu[2].classList.add('purple')
     </script>
 </body>
 </html>
