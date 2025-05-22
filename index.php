@@ -23,14 +23,14 @@
         <p class = "descricao">Uma comunidade digital que oferece suporte personalizado, ferramentas de acompanhamento e conexões significativas para ajudar você a superar seus desafios.</p>
         <div class = "buttons">
           <button id = "cmaButton" class = "button a-btn-main">Começar agora</button>
-          <a class = "saiba-mais" href = "/"> Saiba mais</a>
+          <button onclick="rolar('projeto')" class = "saiba-mais" href = "/"> Saiba mais</button>
         </div>
       </div>
       <img src="./assets/ilstr.svg" alt="Ilustração" class="ilstr">
     </section>
 
     <!-- Projeto -->
-    <section class = "projeto">
+    <section id="projeto" class = "projeto">
       <h1 class = "purple title title-projeto"> Como a Astra pode ajudar você </h1>
       <p class = "descricao descricao-plataforma"> Nossa plataforma combina tecnologia avançada e suporte humano para criar uma experiência completa de recuperação e bem-estar </p>
       <div class = "grid-card">
@@ -75,8 +75,18 @@
     <?php include('./components/avaliacoes.php'); ?>
 
     <script src="./scripts/avaliacoes.js"></script>
-    <script src="./scripts/index.js"></script>
-
+    <script>
+      // Pintar o elemento do nav em que o usuário está presente 
+      const colorMenu = document.querySelectorAll('.btn-menu li a')
+      colorMenu[0].classList.add('purple', 'lineA-ativo')
+      colorMenu[0].classList.remove('lineA')
+      
+      // Rolagem do Saiba mais
+      function rolar(id) {
+        document.getElementById(id).scrollIntoView({
+          behavior: 'smooth'
+        });
+      }</script>
   </main>
 </body>
 </html>

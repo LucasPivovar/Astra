@@ -213,7 +213,8 @@ if (!$isLoggedIn) {
         });
         // Pintar o elemento do nav em que o usuário está presente 
         const colorMenu = document.querySelectorAll('.btn-menu li a')
-        colorMenu[2].classList.add('purple')
+        colorMenu[2].classList.add('purple', 'lineA-ativo')
+        colorMenu[2].classList.remove('lineA')
     </script>
 </body>
 </html>

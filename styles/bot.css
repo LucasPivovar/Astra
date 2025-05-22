@@ -78,11 +78,14 @@ nav {
     align-items: center;
     width: 100%;
     max-width: 100vw;
+    height: 100%;
+    max-height: 80vh;
 }
 
 /* Chat Box */
 #chat-box {
     height: 100%;
+    max-height: 70vh;       
     overflow-y: auto;
     border: none;
     padding: 15px;
@@ -266,7 +269,7 @@ button:focus {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--clear-history-btn-color);
+    background-color: var(--primary-color);
     padding: 0.7rem;
     min-width: 13rem;
     max-height: 2.5rem;
@@ -274,7 +277,7 @@ button:focus {
     cursor: pointer;
     font-size: 18px;
     font-weight: bold;
-    color: var(--button-hover);
+    color: var(--white-color);
     transition: scale 0.3s;
     margin-top: 1rem;
     gap: 0.5rem;
@@ -309,9 +312,10 @@ button:focus {
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background-color: var(--clear-history-btn-color);
-    border-left: 3px solid transparent;
+    background-color: var(--primary-color);
+    border-left: 3px solid var(--white-color);
     width: 80%;
+    color: var(--white-color);
     position: relative;
 }
 
@@ -340,7 +344,6 @@ button:focus {
 .remove-conversation-btn:hover {
     color: var(--logout-color);
     opacity: 1;
-    background-color: var(--text-evidence-color);
 }
 
 #conversation-list li:hover .remove-conversation-btn {
@@ -348,11 +351,11 @@ button:focus {
 }
 
 #conversation-list li.active-conversation {
-    background-color: var(--border-color);
-    border-left: 3px solid var(--button-hover);
+    background-color: var(--white-color);
+    border-left: 3px solid var(--secondary-color);
     font-weight: bold;
     color: var(--primary-color);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
 }
 
 #conversation-list li.empty-list,
@@ -457,6 +460,7 @@ button:focus {
     }
 }
 
+/* Responsividade mobile  */
 @media (max-width: 1023px) {
     body{
         overflow: hidden;
@@ -467,10 +471,14 @@ button:focus {
         display: flex;
     }
 
+    .logo-empresa {
+        display: none;
+    }
+
     .header-container {
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        justify-content: space-between;
         padding: 10px 15px;
         height: 60px;
         overflow: hidden;
@@ -524,6 +532,7 @@ button:focus {
 
     #chat-box {
         height: 100%;
+        max-height: 85vh;
         overflow-y: auto;
         border: none;
         padding: 15px;
@@ -548,66 +557,4 @@ button:focus {
     }
 
 
-}
-
-@media (max-width: 767px) {
-    body {
-        font-size: 14px;
-        overflow-x: hidden;
-    }
-    
-    #chat-container {
-        padding: 10px;
-        height: 75vh;
-    }
-    
-
-    #chat-box {
-        padding: 10px;
-    }
-    
-    .user-message, .bot-message {
-        max-width: 85%;
-        padding: 8px 12px;
-        font-size: 14px;
-    }
-    
-    .input-container {
-        width: 90%;
-        height: 40px;
-        border-radius: 20px;
-        padding: 8px;
-        margin-top: 10px;
-        overflow-x: hidden;
-        margin-right: auto;
-    }
-    
-    #user-input {
-        font-size: 14px;
-    }
-    
-    #empty-message {
-        font-size: 18px;
-        width: 90%;
-    }
-    
-    .sidebar {
-        width: 85%;
-        max-width: 280px;
-    }
-    
-    #clear-history-btn {
-        min-width: 10rem;
-        font-size: 16px;
-    }
-    
-    #conversation-list li {
-        width: 90%;
-        font-size: 14px;
-    }
-    
-    .btn_enviar {
-        width: 22px;
-        height: 22px;
-    }
 }

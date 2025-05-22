@@ -31,5 +31,12 @@
         </div>
     </section>
 </body>
-<script src="./scripts/community.js"></script>
+<script src="./scripts/community.js">
+</script>
+<script>
+    // Pintar o elemento do nav em que o usuário está presente 
+    const colorMenu = document.querySelectorAll('.btn-menu li a')
+    colorMenu[1].classList.add('purple', 'lineA-ativo')
+    colorMenu[1].classList.remove('lineA')
+</script>
 </html>

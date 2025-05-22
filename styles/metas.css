@@ -13,8 +13,29 @@ p, h3{
   border-radius: 20px;
   width: auto;
   box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.3);
-  margin: auto;
+  transition: scale 0.3s;
+  cursor: pointer;
 }
+
+.cards:hover {
+  scale: 1.01;
+}
+
+.edit-delete {
+  width: 11rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  font-size: 15px;
+}
+
+.edit-delete img {
+  height: 20px;
+  width: 20px;
+}
+
 .status-badge {
   border-radius: 2rem;
   background: #7189FF;
@@ -30,10 +51,27 @@ p, h3{
   text-transform: capitalize;
 }
 
-.card-description {
+.card-header {
   margin: 0 0 1rem 0;
+}
+
+.card-description {
+  margin: 0;
+  max-width: 400px;
+  height: 2.1rem;
+  overflow: hidden;
+  word-wrap: break-word;
   color: var(--text-color);
   text-transform: capitalize;
+}
+
+.expanded {
+  height: auto;
+}
+
+.ver-mais {
+  z-index: 1;
+  position: relative;
 }
 
 .card-date {
@@ -67,6 +105,15 @@ p, h3{
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   padding: 5rem;
+  gap: 1rem;
+}
+
+.metas-list{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  grid-column: 1 / 3;
+  align-items: start;
 }
 
 #btn-criar-meta {
@@ -79,4 +126,24 @@ p, h3{
 
 .title-metas {
   grid-column: 1 / 3;
+}
+
+.form-group {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  gap: 20px;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+summary {
+  list-style: none;
 }
